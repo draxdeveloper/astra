@@ -1,10 +1,11 @@
-import os
+# import os
+
+from classesInterface import *
 
 from PPlay.window import *
 from PPlay.sprite import *
 from PPlay.gameimage import *
 from PPlay.animation import *
-
 
 def main():
 
@@ -30,19 +31,23 @@ def main():
 
     #região imagem do inimigo
 
-    rImagemInimigo = Sprite("../assets/sprites/interface/combate/regiaoImagemInimigo.png")
+    rImagemInimigo = Regiao(0,0)
+    rImagemInimigo.setBase("/combate/regiaoImagemInimigo.png")
+    rImagemInimigo.setFundo("/combate/fundoTeste.jpg",0,0)
 
-    rImagemInimigoPosX = 0  # pos X da região imagem do inimigo
-    rImagemInimigoPosY = 0  # pos Y da região imagem do inimigo
+    # rImagemInimigo = Sprite("../assets/sprites/interface/combate/regiaoImagemInimigo.png")
 
-    rImagemInimigo.x = rImagemInimigoPosX
-    rImagemInimigo.y = rImagemInimigoPosY
+    # rImagemInimigoPosX = 0  # pos X da região imagem do inimigo
+    # rImagemInimigoPosY = 0  # pos Y da região imagem do inimigo
+    #
+    # rImagemInimigo.x = rImagemInimigoPosX
+    # rImagemInimigo.y = rImagemInimigoPosY
 
     #regiao nome do astra inimigo
 
     rNomeInimigo = Sprite("../assets/sprites/interface/combate/nomeAstraInimigo.png")
 
-    rNomeInimigoposX = rImagemInimigo.width
+    rNomeInimigoposX = rImagemInimigo.getBase().width
     rNomeInimigoPosY = 0
 
     rNomeInimigo.x = rNomeInimigoposX
@@ -56,7 +61,7 @@ def main():
 
     rSimboloInimigo = Sprite("../assets/sprites/interface/combate/rSimboloAstraInimigo.png")
 
-    rSimboloInimigoPosX = rImagemInimigo.width  # pos X da região imagem do inimigo
+    rSimboloInimigoPosX = rImagemInimigo.getBase().width  # pos X da região imagem do inimigo
     rSimboloInimigoPosY = rNomeInimigo.height  # pos Y da região imagem do inimigo
 
     rSimboloInimigo.x = rSimboloInimigoPosX
@@ -66,8 +71,8 @@ def main():
 
     inimigo = Sprite("/home/mimi/astra/trunk/assets/sprites/astras/orbFogo360.png")
 
-    inimigoPosX = int((rImagemInimigo.width/4))
-    inimigoPosY = int((rImagemInimigo.height/4)*2)
+    inimigoPosX = int((rImagemInimigo.getBase().width/4))
+    inimigoPosY = int((rImagemInimigo.getBase().height/4)*2)
     inimigo.x = inimigoPosX
     inimigo.y = inimigoPosY
     print(inimigoPosX)
@@ -83,7 +88,7 @@ def main():
     while(teclado.key_pressed(sair) == False):
 
         janela.set_background_color(janelaCorFundo)
-        rImagemInimigo.draw()
+        rImagemInimigo.desenhaRegiao()
         rNomeInimigo.draw()
         rSimboloInimigo.draw()
         Window.draw_text(janela,nomeInimigo,nomeInimigoPosX,nomeInimigoPosY,textoPadraoTamanho,textoPadraoCor,textoPadraoFonte,textoPadraoBold,textoPadraoItalic)
