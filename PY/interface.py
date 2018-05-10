@@ -22,60 +22,91 @@ def main():
     janela.set_title(janelaNome)
     janela.set_background_color(janelaCorFundo)
 
-    #texto padrão
-    textoPadraoFonte = "Sans"
-    textoPadraoTamanho = 70
-    textoPadraoCor = (0, 255, 0)
-    textoPadraoBold = True
-    textoPadraoItalic = True
+    # região da imagem do inimigo
 
-    #região imagem do inimigo
-
-    rImagemInimigo = Regiao(0,0)
-    rImagemInimigo.setBase("/combate/regiaoImagemInimigo.png")
-    rImagemInimigo.setFundo("/combate/fundoTeste.jpg",0,0)
-
-    # rImagemInimigo = Sprite("../assets/sprites/interface/combate/regiaoImagemInimigo.png")
-
-    # rImagemInimigoPosX = 0  # pos X da região imagem do inimigo
-    # rImagemInimigoPosY = 0  # pos Y da região imagem do inimigo
-    #
-    # rImagemInimigo.x = rImagemInimigoPosX
-    # rImagemInimigo.y = rImagemInimigoPosY
-
-    #regiao nome do astra inimigo
-
-    rNomeInimigo = Sprite("../assets/sprites/interface/combate/nomeAstraInimigo.png")
-
-    rNomeInimigoposX = rImagemInimigo.getBase().width
-    rNomeInimigoPosY = 0
-
-    rNomeInimigo.x = rNomeInimigoposX
-    rNomeInimigo.y = rNomeInimigoPosY
-
-    nomeInimigo = "Igni"
-    nomeInimigoPosX = int(rNomeInimigo.x + (rNomeInimigo.width/3))
-    nomeInimigoPosY = int(rNomeInimigo.height/4)
-
-    # região dos simbolos do inimigo
-
-    rSimboloInimigo = Sprite("../assets/sprites/interface/combate/rSimboloAstraInimigo.png")
-
-    rSimboloInimigoPosX = rImagemInimigo.getBase().width  # pos X da região imagem do inimigo
-    rSimboloInimigoPosY = rNomeInimigo.height  # pos Y da região imagem do inimigo
-
-    rSimboloInimigo.x = rSimboloInimigoPosX
-    rSimboloInimigo.y = rSimboloInimigoPosY
+    rImagemInimigo = Regiao(0,0,janela,"/combate/rImagemInimigo.png",3,3,"tela","direita","tela","abaixo","/combate/fundoTeste.jpg")
 
     #astra inimigo, aqui são colocadas as questão de interface do inimigo, o funcionamento fica em outro script
 
-    inimigo = Sprite("/home/mimi/astra/trunk/assets/sprites/astras/orbFogo360.png")
+    inimigo = Sprite("../assets/sprites/astras/orbFogo360.png")
 
-    inimigoPosX = int((rImagemInimigo.getBase().width/4))
-    inimigoPosY = int((rImagemInimigo.getBase().height/4)*2)
-    inimigo.x = inimigoPosX
-    inimigo.y = inimigoPosY
-    print(inimigoPosX)
+    aninharNaRegiao(inimigo,rImagemInimigo,"centro","abaixo")
+
+    #regiao nome do astra inimigo
+
+    rNomeInimigo = Regiao(-3,0,janela,"/combate/rNomeAstraInimigo.png",3,3,rImagemInimigo,"direita","tela","abaixo")
+
+    #nome do inimigo
+
+    nomeInimigo = Sprite("../assets/sprites/interface/combate/nomeAstraIgni.png")
+
+    aninharNaRegiao(nomeInimigo,rNomeInimigo,"centro","centro")
+
+    # região dos simbolos do inimigo
+
+    rSimboloInimigo = Regiao(-3,-3,janela,"/combate/rSimboloAstraInimigo.png",3,3,rImagemInimigo,"direita",rNomeInimigo,"abaixo")
+
+    #simbolos do inimigo
+
+    simboloElemento = Sprite("../assets/sprites/interface/combate/fogoIcone.png")
+    simboloAlinhamento = Sprite("../assets/sprites/interface/combate/solIcone.png")
+    simboloEmblema = Sprite("../assets/sprites/interface/combate/espadaIcone.png")
+
+    aninharNaRegiao(simboloElemento,rSimboloInimigo,"esquerda","centro",simboloElemento.width/2)
+    aninharNaRegiao(simboloAlinhamento,rSimboloInimigo,"esquerda","centro",simboloElemento.width*2.5)
+    aninharNaRegiao(simboloEmblema,rSimboloInimigo,"esquerda","centro",simboloElemento.width*4.5)
+
+    #região HP e SP do inimigo
+
+    rHPInimigo = Regiao(-3,-3,janela,"/combate/rHPSP.png",3,3,rImagemInimigo,"direita",rSimboloInimigo,"abaixo")
+    rSPInimigo = Regiao(0,-3, janela, "/combate/rHPSP.png", 3, 3, rHPInimigo, "direita", rSimboloInimigo, "abaixo")
+
+    #HP e SP do inimigo
+
+    hpInimigo = Sprite("../assets/sprites/interface/combate/hpInimigo.png")
+    spInimigo = Sprite("../assets/sprites/interface/combate/spInimigo.png")
+
+    aninharNaRegiao(hpInimigo,rHPInimigo,"centro,","centro")
+    aninharNaRegiao(spInimigo, rSPInimigo, "centro,", "centro")
+
+    #região de atributos do inimigo
+
+    rAtributosInimigo = Regiao(-3,0,janela,"/combate/rAtributosInimigo.png",3,3,rImagemInimigo,"direita",rHPInimigo,"abaixo")
+
+    #atributos do inimigo
+
+    forInimigo = Sprite("../assets/sprites/interface/combate/forInimigo.png")
+    evaInimigo = Sprite("../assets/sprites/interface/combate/evaInimigo.png")
+    preInimigo = Sprite("../assets/sprites/interface/combate/preInimigo.png")
+    vigInimigo = Sprite("../assets/sprites/interface/combate/vigInimigo.png")
+
+    aninharNaRegiao(forInimigo,rAtributosInimigo,"esquerda","acima",10,10)
+    aninharNaRegiao(evaInimigo,rAtributosInimigo,"direita","abaixo",10,10)
+    aninharNaRegiao(preInimigo,rAtributosInimigo,"direita","acima",10,10)
+    aninharNaRegiao(vigInimigo,rAtributosInimigo,"esquerda","abaixo",10,10)
+
+    #regiao do texto principal
+    rTextoPrincipal = Regiao(0,0,janela,"/combate/rTextoPrincipal.png",3,3,"tela","esquerda","tela","abaixo")
+
+    #textoPrincipal
+
+    #>posicionamento baseado em como ira funcionar as linhas
+
+    totalLinhas = 2
+
+    linha1 = Sprite("../assets/sprites/interface/combate/textoPrincipalL1.png")
+    linha2 = Sprite("../assets/sprites/interface/combate/textoPrincipalL2.png")
+
+    aninharNaRegiao(linha1,rTextoPrincipal,"esquerda","abaixo",5,linha1.height * (totalLinhas - 1) + 5)
+    aninharNaRegiao(linha2,rTextoPrincipal,"esquerda","abaixo",5,linha1.height * (totalLinhas - 2) + 5)
+
+    #região seleção de ataque
+    rSelecaoAtaque = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,"tela","esquerda",rImagemInimigo,"abaixo","",0,0,True,0)
+    rSelecaoAtaque.moverRegiao(0,rSelecaoAtaque.getBorda().height)
+
+    #cursor
+    cursor = Cursor(janela,"/glove3.png","/glove3Espelhada.png")
+    cursor.moveCursor(janela,0)
 
     #controle
 
@@ -88,11 +119,38 @@ def main():
     while(teclado.key_pressed(sair) == False):
 
         janela.set_background_color(janelaCorFundo)
+
+        #draw regiões
+
         rImagemInimigo.desenhaRegiao()
-        rNomeInimigo.draw()
-        rSimboloInimigo.draw()
-        Window.draw_text(janela,nomeInimigo,nomeInimigoPosX,nomeInimigoPosY,textoPadraoTamanho,textoPadraoCor,textoPadraoFonte,textoPadraoBold,textoPadraoItalic)
+        rNomeInimigo.desenhaRegiao()
+        rSimboloInimigo.desenhaRegiao()
+        rHPInimigo.desenhaRegiao()
+        rSPInimigo.desenhaRegiao()
+        rAtributosInimigo.desenhaRegiao()
+        rTextoPrincipal.desenhaRegiao()
+        rSelecaoAtaque.desenhaRegiao()
+
+        #draw sprites
+
         inimigo.draw()
+        simboloElemento.draw()
+        simboloAlinhamento.draw()
+        simboloEmblema.draw()
+        cursor.desenhaCursor()
+
+        #draw textos
+
+        nomeInimigo.draw()
+        hpInimigo.draw()
+        spInimigo.draw()
+        forInimigo.draw()
+        preInimigo.draw()
+        evaInimigo.draw()
+        vigInimigo.draw()
+        linha1.draw()
+        linha2.draw()
+
         janela.update()
 
 main()
