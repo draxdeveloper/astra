@@ -254,7 +254,7 @@ class Regiao(object):
 
             else:
 
-                objeto.x = regiaoVertical.getBorda().y - objeto.height
+                objeto.y = regiaoVertical.getBorda().y - objeto.height
 
 class Cursor(object):
 
