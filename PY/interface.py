@@ -101,8 +101,26 @@ def main():
     aninharNaRegiao(linha2,rTextoPrincipal,"esquerda","abaixo",5,linha1.height * (totalLinhas - 2) + 5)
 
     #região seleção de ataque
-    rSelecaoAtaque = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,"tela","esquerda",rImagemInimigo,"abaixo","",0,0,True,0)
+    rSelecaoAtaque = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,"tela","direita",rImagemInimigo,"abaixo","",0,0,True,0)
     rSelecaoAtaque.moverRegiao(0,rSelecaoAtaque.getBorda().height)
+
+    #texto seleção de ataque
+    textoAtaque = Sprite("../assets/sprites/interface/combate/textoSelecaoAtaque.png")
+    aninharNaRegiao(textoAtaque,rSelecaoAtaque,"centro","centro")
+
+    #regiao seleção de tecnica
+    rSelecaoTecnica = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,"tela","direita",rSelecaoAtaque,"abaixo","",0,0,True,1)
+
+    #texto seleção tecnica
+    textoTecnica = Sprite("../assets/sprites/interface/combate/textoSelecaoTecnica.png")
+    aninharNaRegiao(textoTecnica,rSelecaoTecnica,"centro","centro")
+
+    #regiao selecao tecnica elemental
+    rSelecaoElemental = Regiao(0,rSelecaoAtaque.getBorda().height,janela,"/combate/rSelecaoAtaque.png",3,3,rSelecaoAtaque,"direita",rAtributosInimigo,"abaixo","",0,0,True,2)
+
+    #texto tecnical elemental
+    textoElemental = Sprite("../assets/sprites/interface/combate/textoElemental.png")
+    aninharNaRegiao(textoElemental,rSelecaoElemental,"centro","centro")
 
     #cursor
     cursor = Cursor(janela,"/glove3.png","/glove3Espelhada.png")
@@ -113,10 +131,22 @@ def main():
     teclado = Window.get_keyboard()
 
     sair = "esc"
+    selecaoAbaixo = "down"
+    selecaoAcima = "up"
 
     #game loop
 
     while(teclado.key_pressed(sair) == False):
+
+        if(teclado.key_pressed("down") or teclado.key_pressed("up")):
+
+            if(cursor.getPosAtual() == 1):
+
+                cursor.moveCursor(janela,0)
+
+            else:
+
+                cursor.moveCursor(janela,1)
 
         janela.set_background_color(janelaCorFundo)
 
@@ -130,6 +160,8 @@ def main():
         rAtributosInimigo.desenhaRegiao()
         rTextoPrincipal.desenhaRegiao()
         rSelecaoAtaque.desenhaRegiao()
+        rSelecaoTecnica.desenhaRegiao()
+        rSelecaoElemental.desenhaRegiao()
 
         #draw sprites
 
@@ -150,6 +182,9 @@ def main():
         vigInimigo.draw()
         linha1.draw()
         linha2.draw()
+        textoAtaque.draw()
+        textoTecnica.draw()
+        textoElemental.draw()
 
         janela.update()
 

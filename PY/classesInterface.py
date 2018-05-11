@@ -261,15 +261,15 @@ class Cursor(object):
     spriteCursorAtual = ""
     spriteCursorNormal = ""
     spriteCursorEspelhado = ""
-    posInicial = -1
+    posAtual = -1
     janela = ""
 
-    def __init__(self,window,spriteCursorNormal,spriteCursorEspepelhado,intPosInicial = 0):
+    def __init__(self,window,spriteCursorNormal,spriteCursorEspepelhado,intPosAtual = 0):
 
         self.spriteCursorNormal = Sprite(interface + spriteCursorNormal)
         self.spriteCursorEspelhado = Sprite(interface + spriteCursorEspepelhado)
         self.spriteCursorAtual = self.spriteCursorNormal
-        self.posInicial = intPosInicial
+        self.posAtual = intPosAtual
         janela = window
 
     #get_set
@@ -290,8 +290,14 @@ class Cursor(object):
 
         self.spriteCursor.y
 
+    def getPosAtual(self):
+
+        return self.posAtual
+
 
     def moveCursor(self,janela,intNovaPos):
+
+        self.posAtual = intNovaPos
 
         referencia = listaSelecionavel.get(intNovaPos)
 
