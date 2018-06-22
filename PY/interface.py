@@ -1,5 +1,4 @@
-# import os
-
+# -*- coding: iso-8859-15 -*-
 from classesInterface import *
 
 from PPlay.window import *
@@ -11,8 +10,8 @@ def main():
 
     #janela
 
-    janelaLargura = int((1920/5) * 3) #3/5 da resolu√ß√£o 1920X1080
-    janelaAltura = int((1080/5) * 3) #3/5 da resolu√ß√£o 1920X1080
+    janelaLargura = int((1920/5) * 3) #3/5 da resoluÁ„o 1920X1080
+    janelaAltura = int((1080/5) * 3) #3/5 da resoluÁ„o 1920X1080
 
     janela = Window(janelaLargura,janelaAltura)
 
@@ -22,15 +21,15 @@ def main():
     janela.set_title(janelaNome)
     janela.set_background_color(janelaCorFundo)
 
-    # regi√£o da imagem do inimigo
+    # regi„o da imagem do inimigo
 
     rImagemInimigo = Regiao(0,0,janela,"/combate/rImagemInimigo.png",3,3,"tela","direita","tela","abaixo","/combate/fundoTeste.jpg")
 
-    #astra inimigo, aqui s√£o colocadas as quest√£o de interface do inimigo, o funcionamento fica em outro script
+    #astra inimigo, aqui s„o colocadas as quest„o de interface do inimigo, o funcionamento fica em outro script
 
     inimigo = Sprite("../assets/sprites/astras/orbFogo360.png")
 
-    aninharNaRegiao(inimigo,rImagemInimigo,"centro","abaixo")
+    aninhar(inimigo, janela, rImagemInimigo,"centro","abaixo")
 
     #regiao nome do astra inimigo
 
@@ -40,9 +39,9 @@ def main():
 
     nomeInimigo = Sprite("../assets/sprites/interface/combate/nomeAstraIgni.png")
 
-    aninharNaRegiao(nomeInimigo,rNomeInimigo,"centro","centro")
+    aninhar(nomeInimigo,janela,rNomeInimigo,"centro","centro")
 
-    # regi√£o dos simbolos do inimigo
+    # regi„o dos simbolos do inimigo
 
     rSimboloInimigo = Regiao(-3,-3,janela,"/combate/rSimboloAstraInimigo.png",3,3,rImagemInimigo,"direita",rNomeInimigo,"abaixo")
 
@@ -52,11 +51,11 @@ def main():
     simboloAlinhamento = Sprite("../assets/sprites/interface/combate/solIcone.png")
     simboloEmblema = Sprite("../assets/sprites/interface/combate/espadaIcone.png")
 
-    aninharNaRegiao(simboloElemento,rSimboloInimigo,"esquerda","centro",simboloElemento.width/2)
-    aninharNaRegiao(simboloAlinhamento,rSimboloInimigo,"esquerda","centro",simboloElemento.width*2.5)
-    aninharNaRegiao(simboloEmblema,rSimboloInimigo,"esquerda","centro",simboloElemento.width*4.5)
+    aninhar(simboloElemento, janela, rSimboloInimigo,"esquerda","centro",simboloElemento.width/2)
+    aninhar(simboloAlinhamento, janela, rSimboloInimigo,"esquerda","centro",simboloElemento.width*2.5)
+    aninhar(simboloEmblema, janela, rSimboloInimigo,"esquerda","centro",simboloElemento.width*4.5)
 
-    #regi√£o HP e SP do inimigo
+    #regi„o HP e SP do inimigo
 
     rHPInimigo = Regiao(-3,-3,janela,"/combate/rHPSP.png",3,3,rImagemInimigo,"direita",rSimboloInimigo,"abaixo")
     rSPInimigo = Regiao(0,-3, janela, "/combate/rHPSP.png", 3, 3, rHPInimigo, "direita", rSimboloInimigo, "abaixo")
@@ -66,10 +65,10 @@ def main():
     hpInimigo = Sprite("../assets/sprites/interface/combate/hpInimigo.png")
     spInimigo = Sprite("../assets/sprites/interface/combate/spInimigo.png")
 
-    aninharNaRegiao(hpInimigo,rHPInimigo,"centro,","centro")
-    aninharNaRegiao(spInimigo, rSPInimigo, "centro,", "centro")
+    aninhar(hpInimigo,janela, rHPInimigo,"centro,","centro")
+    aninhar(spInimigo, janela, rSPInimigo, "centro,", "centro")
 
-    #regi√£o de atributos do inimigo
+    #regi„o de atributos do inimigo
 
     rAtributosInimigo = Regiao(-3,0,janela,"/combate/rAtributosInimigo.png",3,3,rImagemInimigo,"direita",rHPInimigo,"abaixo")
 
@@ -80,10 +79,10 @@ def main():
     preInimigo = Sprite("../assets/sprites/interface/combate/preInimigo.png")
     vigInimigo = Sprite("../assets/sprites/interface/combate/vigInimigo.png")
 
-    aninharNaRegiao(forInimigo,rAtributosInimigo,"esquerda","acima",10,10)
-    aninharNaRegiao(evaInimigo,rAtributosInimigo,"direita","abaixo",10,10)
-    aninharNaRegiao(preInimigo,rAtributosInimigo,"direita","acima",10,10)
-    aninharNaRegiao(vigInimigo,rAtributosInimigo,"esquerda","abaixo",10,10)
+    aninhar(forInimigo,janela, rAtributosInimigo,"esquerda","acima",10,10)
+    aninhar(evaInimigo,janela, rAtributosInimigo,"direita","abaixo",10,10)
+    aninhar(preInimigo,janela, rAtributosInimigo,"direita","acima",10,10)
+    aninhar(vigInimigo,janela, rAtributosInimigo,"esquerda","abaixo",10,10)
 
     #regiao do texto principal
     rTextoPrincipal = Regiao(0,0,janela,"/combate/rTextoPrincipal.png",3,3,"tela","esquerda","tela","abaixo")
@@ -97,10 +96,10 @@ def main():
     linha1 = Sprite("../assets/sprites/interface/combate/textoPrincipalL1.png")
     linha2 = Sprite("../assets/sprites/interface/combate/textoPrincipalL2.png")
 
-    aninharNaRegiao(linha1,rTextoPrincipal,"esquerda","abaixo",5,linha1.height * (totalLinhas - 1) + 5)
-    aninharNaRegiao(linha2,rTextoPrincipal,"esquerda","abaixo",5,linha1.height * (totalLinhas - 2) + 5)
+    aninhar(linha1,janela, rTextoPrincipal,"esquerda","abaixo",5,linha1.height * (totalLinhas - 1) + 5)
+    aninhar(linha2,janela, rTextoPrincipal,"esquerda","abaixo",5,linha1.height * (totalLinhas - 2) + 5)
 
-    #regiao de decorcao dos 4 elementos, n√£o est√° na estrutura certa, depois criar uma fun√ß√£o para ancorar sprites numa regi√£o, n√£o apenas uma regi√£o na outra
+    #regiao de decorcao dos 4 elementos, n„o est· na estrutura certa, depois criar uma funÁ„o para ancorar sprites numa regi„o, n„o apenas uma regi„o na outra
     rDecoracaoSuperior1 = Regiao(0,0,janela,"/combate/decoracao4elementos.png",0,0,"tela","direita",rImagemInimigo,"abaixo")
     rDecoracaoSuperior2 = Regiao(0,0,janela,"/combate/decoracao4elementos.png",0,0,rDecoracaoSuperior1,"direita",rImagemInimigo,"abaixo")
     rDecoracaoSuperior3 = Regiao(0,0,janela,"/combate/decoracao4elementos.png",0,0,rDecoracaoSuperior2,"direita",rImagemInimigo,"abaixo")
@@ -110,57 +109,57 @@ def main():
     rDecoracaoInferior3 = Regiao(0,0,janela,"/combate/decoracao4elementos.png",0,0,rDecoracaoInferior2,"direita","tela","acima")
     # rDecoracaoInferior4 = Regiao(0,0,janela,"/combate/decoracao4elementos.png",0,0,rDecoracaoInferior3,"direita","tela","acima")
 
-    #regi√£o sele√ß√£o de ataque
+    #regi„o seleÁ„o de ataque
     rSelecaoAtaque = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,"tela","direita",rDecoracaoSuperior1,"abaixo","",0,0,True,0)
     # rSelecaoAtaque.moverRegiao(0,rSelecaoAtaque.getBorda().height)
 
-    #texto sele√ß√£o de ataque
+    #texto seleÁ„o de ataque
     textoAtaque = Sprite("../assets/sprites/interface/combate/textoSelecaoAtaque.png")
-    aninharNaRegiao(textoAtaque,rSelecaoAtaque,"centro","centro")
+    aninhar(textoAtaque,janela, rSelecaoAtaque,"centro","centro")
 
-    #regiao sele√ß√£o de tecnica
+    #regiao seleÁ„o de tecnica
     rSelecaoTecnica = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,"tela","direita",rDecoracaoInferior1,"acima","",0,0,True,1)
 
-    #texto sele√ß√£o tecnica
+    #texto seleÁ„o tecnica
     textoTecnica = Sprite("../assets/sprites/interface/combate/textoSelecaoTecnica.png")
-    aninharNaRegiao(textoTecnica,rSelecaoTecnica,"centro","centro")
+    aninhar(textoTecnica,janela, rSelecaoTecnica,"centro","centro")
 
     #regiao selecao tecnica elemental
     rSelecaoElemental = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,rSelecaoAtaque,"direita",rDecoracaoSuperior2,"abaixo","",0,0,True,2)
 
     #texto tecnica elemental
     textoElemental = Sprite("../assets/sprites/interface/combate/textoElemental.png")
-    aninharNaRegiao(textoElemental,rSelecaoElemental,"centro","centro")
+    aninhar(textoElemental,janela, rSelecaoElemental,"centro","centro")
 
     #regiao selecao tecnica alinhamento
     rSelecaoAlinhamento = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,rSelecaoElemental,"direita",rDecoracaoSuperior3,"abaixo","",0,0,True,3)
 
     #texto tecnica alinhamento
     textoAlinhamento = Sprite("../assets/sprites/interface/combate/textoAlinhamento.png")
-    aninharNaRegiao(textoAlinhamento,rSelecaoAlinhamento,"centro","centro")
+    aninhar(textoAlinhamento,janela, rSelecaoAlinhamento,"centro","centro")
 
     #regiao selecao tecnica emblema
     rSelecaoEmblema = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,rSelecaoTecnica,"direita",rDecoracaoInferior2,"acima","",0,0,True,4)
 
     #texto tecnical emblema
     textoEmblema = Sprite("../assets/sprites/interface/combate/textoEmblema.png")
-    aninharNaRegiao(textoEmblema,rSelecaoEmblema,"centro","centro")
+    aninhar(textoEmblema,janela, rSelecaoEmblema,"centro","centro")
 
     #regiao selecao tecnica especial
     rSelecaoEspecial = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,rSelecaoEmblema,"direita",rDecoracaoInferior3,"acima","",0,0,True,5)
 
     #texto tecnical especial
     textoEspecial = Sprite("../assets/sprites/interface/combate/textoEspecial.png")
-    aninharNaRegiao(textoEspecial,rSelecaoEspecial,"centro","centro")
+    aninhar(textoEspecial,janela, rSelecaoEspecial,"centro","centro")
 
-    #regi√£o  do imagem do astra do jogador
+    #regi„o  do imagem do astra do jogador
     rImagemJogador = Regiao(0,0,janela,"/combate/rImagemJogador.png",3,3,rSelecaoAlinhamento,"direita",rAtributosInimigo,"abaixo")
 
     #imagem astra do jogador
     jogador = Sprite("../assets/sprites/astras/orbAgua138.png")
-    aninharNaRegiao(jogador,rImagemJogador,"centro","centro")
+    aninhar(jogador, janela, rImagemJogador,"centro","centro")
 
-    #regi√£o icones do jogador
+    #regi„o icones do jogador
     rSimboloJogador = Regiao(0,0,janela,"/combate/rSimboloAstraJogador.png",3,3,rSelecaoEspecial,"direita",rImagemJogador,"abaixo")
 
     #simbolos do jogador
@@ -168,18 +167,18 @@ def main():
     simboloAlinhamentoJogador = Sprite("../assets/sprites/interface/combate/solIconeRedux.png")
     simboloEmblemaJogador = Sprite("../assets/sprites/interface/combate/espadaIconeRedux.png")
 
-    aninharNaRegiao(simboloElementoJogador,rSimboloJogador,"esquerda","centro,")
-    aninharNaRegiao(simboloAlinhamentoJogador,rSimboloJogador,"centro","centro",-4)
-    aninharNaRegiao(simboloEmblemaJogador,rSimboloJogador,"direita","centro")
+    aninhar(simboloElementoJogador,janela, rSimboloJogador,"esquerda","centro,")
+    aninhar(simboloAlinhamentoJogador,janela, rSimboloJogador,"centro","centro",-4)
+    aninhar(simboloEmblemaJogador, janela, rSimboloJogador,"direita","centro")
 
-    #regi√£o nome do jogador
+    #regi„o nome do jogador
     rNomeJogador = Regiao(0,0,janela,"/combate/rNomeAstraJogador.png",3,3,rImagemJogador,"direita",rAtributosInimigo,"abaixo")
 
     #nome do jogador
     nomeJogador = Sprite("../assets/sprites/interface/combate/nomeAstraAquaRedux.png")
-    aninharNaRegiao(nomeJogador,rNomeJogador,"centro","centro")
+    aninhar(nomeJogador, janela, rNomeJogador,"centro","centro")
 
-    #regi√£o HP e SP do jogador
+    #regi„o HP e SP do jogador
     rHPJogador = Regiao(0,0,janela,"/combate/rHPSPJogador.png",3,3,rImagemJogador,"direita",rNomeJogador,"abaixo")
     rSPJogador = Regiao(0,0,janela,"/combate/rHPSPJogador.png",3,3, rHPJogador, "direita", rNomeJogador, "abaixo")
 
@@ -189,12 +188,12 @@ def main():
     spJogador = Sprite("../assets/sprites/interface/combate/spJogador.png")
     valorSPJogador = Sprite("../assets/sprites/interface/combate/valorHPSPJogador.png")
 
-    aninharNaRegiao(hpJogador,rHPJogador,"centro","acima")
-    aninharNaRegiao(valorHPJogador,rHPJogador,"centro","abaixo")
-    aninharNaRegiao(spJogador,rSPJogador,"centro","acima")
-    aninharNaRegiao(valorSPJogador,rSPJogador,"centro","abaixo")
+    aninhar(hpJogador,janela, rHPJogador,"centro","acima")
+    aninhar(valorHPJogador,janela, rHPJogador,"centro","abaixo")
+    aninhar(spJogador,janela, rSPJogador,"centro","acima")
+    aninhar(valorSPJogador, janela, rSPJogador,"centro","abaixo")
 
-    #regi√£o atributos do jogador
+    #regi„o atributos do jogador
     rAtributosJogador = Regiao(0,0,janela,"/combate/rAtributosJogador.png",3,3,rImagemJogador,"direita",rHPJogador,"abaixo")
 
     #atributos jogador
@@ -203,15 +202,15 @@ def main():
     vigJogador = Sprite("../assets/sprites/interface/combate/vigJogador.png")
     evaJogador = Sprite("../assets/sprites/interface/combate/evaJogador.png")
 
-    aninharNaRegiao(forJogador,rAtributosJogador,"esquerda","acima",5,5)
-    aninharNaRegiao(preJogador,rAtributosJogador,"direita","acima", 5,5)
-    aninharNaRegiao(vigJogador,rAtributosJogador,"esquerda","abaixo",5,5)
-    aninharNaRegiao(evaJogador,rAtributosJogador,"direita","abaixo",5,5)
+    aninhar(forJogador, janela, rAtributosJogador,"esquerda","acima",5,5)
+    aninhar(preJogador,janela, rAtributosJogador,"direita","acima", 5,5)
+    aninhar(vigJogador,janela, rAtributosJogador,"esquerda","abaixo",5,5)
+    aninhar(evaJogador,janela, rAtributosJogador,"direita","abaixo",5,5)
 
-    #regi√£o descri√ß√£o
+    #regi„o descriÁ„o
     rDescricao = Regiao(0,0,janela,"/combate/rDescricao.png",3,3,rNomeJogador,"direita",rTextoPrincipal,"abaixo")
 
-    #texto descri√ß√£o, ele √© variavel e decidido no loop... No momento, futuramente esse processo ser√° uma fun√ß√£o da classe de texto
+    #texto descriÁ„o, ele È variavel e decidido no loop... No momento, futuramente esse processo ser· uma funÁ„o da classe de texto
     descricaoAtual = ""
 
     #cursor
@@ -243,7 +242,7 @@ def main():
         janela.set_background_color(janelaCorFundo)
 
 
-        #draw regi√µes
+        #draw regiıes
 
         rImagemInimigo.desenhaRegiao()
         rNomeInimigo.desenhaRegiao()
@@ -311,7 +310,7 @@ def main():
             descricaoAtual = Sprite("../assets/sprites/interface/combate/textoDescricaoTecnica.png")
 
 
-        aninharNaRegiao(descricaoAtual,rDescricao,"esquerda","abaixo",5,2)
+        aninhar(descricaoAtual,janela, rDescricao,"esquerda","abaixo",5,2)
 
         descricaoAtual.draw()
 

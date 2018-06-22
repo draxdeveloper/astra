@@ -1,9 +1,11 @@
-#aqui ficarÃ£o localizadas as classes de interface, no momento temos as seguintes:
+# -*- coding: iso-8859-15 -*-
+
+#aqui ficarão localizadas as classes de interface, no momento temos as seguintes:
 #Regiao: uma regiao da tela, visualmente visivel
-#Area: uma regiao da tela, visualmente visivel, que estÃ¡ dentro de outra regiÃ£o
-#Texto: classe para geraÃ§Ã£o de texto e seleÃ§Ã£o de fontes e seus atributos
+#Area: uma regiao da tela, visualmente visivel, que está dentro de outra região
+#Texto: classe para geração de texto e seleção de fontes e seus atributos
 #Menu: classe que gera menus
-#Ancorar e aninhar. FunÃ§Ãµes gerais que servem para posicionar elementos na tela
+#Ancorar e aninhar. Funções gerais que servem para posicionar elementos na tela
 
 from pygame.font import *
 from PPlay.window import *
@@ -19,26 +21,34 @@ sprites = "../assets/sprites"
 interface = sprites + "/interface"
 texto = sprites + "/texto"
 
+class Texto(object):
+    "escreve um texto na regiao especificada e com os parametros especificados"
+    pass
+
+class TextBox(object):
+    "cria uma região especial que escreve um lista de textos, com quebra de linha"
+    pass
+
 class Regiao(object):
 
-    #classe que define uma regiÃ£o visivel na tela
+    #classe que define uma região visivel na tela
 
     #atributos
 
-    # nome = "" #um nome para regiÃ£o (OPICIONAL), adicionar futuramente
-    borda = "" #uma imagem padrÃ£o geralmente utilizada para definir a borda e outros detalhes
+    # nome = "" #um nome para região (OPICIONAL), adicionar futuramente
+    borda = "" #uma imagem padrão geralmente utilizada para definir a borda e outros detalhes
     tamanhoBorda = (0,0) #a espessura da borda horizontal e vertical
-    fundo = "" #um fundo para a regiÃ£o, esse fundo fica sobre a base, util quando existe uma borda e um fundo variavel
-    selecionavel = False #determina se o cursor pode se posicionar em certa regiÃ£o da tela
-    ordemSelecao = 0 #determina a ordem que o cursor ira passar, nem sempre Ã© exata devido a sub-menus, somente se selecionavel for True
-    # corFundo = (0,0,0) #Ã© a cor de fundo caso nÃ£o exista nenhuma base na regiÃ£o
-    width = 0 #a largura da regiÃ£o
+    fundo = "" #um fundo para a região, esse fundo fica sobre a base, util quando existe uma borda e um fundo variavel
+    selecionavel = False #determina se o cursor pode se posicionar em certa região da tela
+    ordemSelecao = 0 #determina a ordem que o cursor ira passar, nem sempre é exata devido a sub-menus, somente se selecionavel for True
+    # corFundo = (0,0,0) #é a cor de fundo caso não exista nenhuma base na região
+    width = 0 #a largura da região
     height = 0 #a altura da regiao
-    x = 0 #a posiÃ§Ã£o x da regiÃ£o
-    y = 0 #a posiÃ§Ã£o y da regiÃ£o
+    x = 0 #a posição x da região
+    y = 0 #a posição y da região
 
-    # fundoX = 0 #a posiÃ§Ã£o x do fundo em relaÃ§Ã£o a regiÃ£o
-    # fundoY = 0 #a posiÃ§Ã£o y do fundo em relaÃ§Ã£o a regiÃ£o
+    # fundoX = 0 #a posição x do fundo em relação a região
+    # fundoY = 0 #a posição y do fundo em relação a região
 
 
 
@@ -46,7 +56,7 @@ class Regiao(object):
 
     def __init__(self,intX,intY,window,spriteBorda, intTamanhoBordaX, intTamanhoBordaY, regiaoHorizontal = "tela", strTipoAncoraHorizontal = "direita", regiaoVertical = "tela", strTipoAncoraVertical = "abaixo", spriteFundo="", intFundoX = 0, intFundoY = 0, boolSelecionavel = False, intOrdemSelecao = -1 ):
 
-        "x e y Ã© o deslocamento em relaÃ§Ã£o a ancora, invertido no caso de esquerda e acima. Dados de aconramento ver funÃ§Ã£o ancorarNaRegiao"
+        "x e y é o deslocamento em relação a ancora, invertido no caso de esquerda e acima. Dados de aconramento ver função ancorarNaRegiao"
 
         self.setBorda(spriteBorda,intTamanhoBordaX,intTamanhoBordaY)
         ancorar(self.getBorda(),window,regiaoHorizontal,strTipoAncoraHorizontal,regiaoVertical,strTipoAncoraVertical)
@@ -80,7 +90,7 @@ class Regiao(object):
 
     def setBorda(self,spriteBase,tamX,tamY):
 
-        "o argumento deve ser o endereÃ§o do sprite, para facilitar o endereÃ§o deve comeÃ§ar a partir da pasta interface"
+        "o argumento deve ser o endereço do sprite, para facilitar o endereço deve começar a partir da pasta interface"
 
         self.borda = Sprite(interface + spriteBase)
         self.tamanhoBorda = (tamX,tamY)
@@ -176,7 +186,7 @@ class Regiao(object):
 
     def setFundo(self,spriteFundo,intX,intY):
 
-        "o argumento deve ser o endereÃ§o do sprite, para facilitar o endereÃ§o deve comeÃ§ar a partir da pasta interface"
+        "o argumento deve ser o endereço do sprite, para facilitar o endereço deve começar a partir da pasta interface"
 
         self.fundo = Sprite(interface + spriteFundo)
         self.fundo.x = self.borda.x + self.tamanhoBorda[0] + int(intX)
@@ -227,7 +237,7 @@ class Regiao(object):
 
     # def ancorarNaRegiao(self,objeto,window,regiaoHorizontal = "tela", strTipoAncoraHorizontal = "direita", regiaoVertical = "tela", strTipoAncoraVertical = "abaixo"):
     #
-    #     "ancora o objeto (que deve ter coordenadas existentes) em relaÃ§Ã£o a uma regiÃ£o, o tipo de ancora horizontal pode ser (direita),(esquerda) e a vertical pode ser (acima) ou (abaixo)"
+    #     "ancora o objeto (que deve ter coordenadas existentes) em relação a uma região, o tipo de ancora horizontal pode ser (direita),(esquerda) e a vertical pode ser (acima) ou (abaixo)"
     #
     #     if(regiaoHorizontal == "tela"):
     #
@@ -284,7 +294,7 @@ class Pilha(object):
 
     def __init__(self,window,listaObjetos,intEspacamento=0,strAncora = "tela",strAlinhamento = "esquerda",bollSelecionavel = "False"):
 
-        #intEspacamento Ã© o espaÃ§o entre os itens da pilha
+        #intEspacamento é o espaço entre os itens da pilha
 
         self.selecionavel = bollSelecionavel
         janela = window
@@ -658,7 +668,7 @@ class Cursor(object):
         self.spriteCursorAtual.x = referencia.x + referencia.width
         self.spriteCursorAtual.y = referencia.y + (referencia.height/2) - (self.spriteCursorAtual.height/2)
 
-        if(self.spriteCursorAtual.x > (janela.width - self.spriteCursorAtual.width)): #fazer funÃ§Ã£o que espelhe o cursor
+        if(self.spriteCursorAtual.x > (janela.width - self.spriteCursorAtual.width)): #fazer função que espelhe o cursor
 
             self.spriteCursorAtual = self.spriteCursorEspelhado
             self.spriteCursorAtual.x = referencia.x - self.spriteCursorAtual.width
@@ -768,7 +778,7 @@ def aninhar(objeto,window, regiao="tela", strTipoAlinhamentoHorizontal = "esquer
 
 def ancorar(objeto,window,ancoraHorizontal = "tela", strTipoAncoraHorizontal = "direita", ancoraVertical = "tela", strTipoAncoraVertical = "abaixo", intDeslocamentoX = 0, intDeslocamentoY = 0):
 
-    "ancora o objeto (que deve ter coordenadas existentes) em relaÃ§Ã£o a uma regiÃ£o, o tipo de ancora horizontal pode ser (direita),(esquerda) e a vertical pode ser (acima) ou (abaixo)"
+    "ancora o objeto (que deve ter coordenadas existentes) em relação a uma região, o tipo de ancora horizontal pode ser (direita),(esquerda) e a vertical pode ser (acima) ou (abaixo)"
 
     if(ancoraHorizontal == "tela"):
 
