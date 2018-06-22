@@ -1,5 +1,3 @@
-# -*- coding: iso-8859-15 -*-
-
 #aqui ficarão localizadas as classes de interface, no momento temos as seguintes:
 #Regiao: uma regiao da tela, visualmente visivel
 #Area: uma regiao da tela, visualmente visivel, que está dentro de outra região
@@ -7,27 +5,120 @@
 #Menu: classe que gera menus
 #Ancorar e aninhar. Funções gerais que servem para posicionar elementos na tela
 
-from pygame.font import *
+from pygame import *
 from PPlay.window import *
 from PPlay.sprite import *
 from PPlay.gameimage import *
 from PPlay.animation import *
 
+font.init() #inicializa modulo de fontes
+
 listaSelecionavel = {} #lista de todos os objetos selecionaveis
-listaFontes = {} #lista de todas as fontes
+# listaFontes = {} #lista de todas as fontes
 
 # enderecos
-sprites = "../assets/sprites"
+assets = "../assets"
+sprites = assets + "/sprites"
 interface = sprites + "/interface"
-texto = sprites + "/texto"
-
-class Texto(object):
-    "escreve um texto na regiao especificada e com os parametros especificados"
-    pass
+fontes = assets + "/fontes"
+# texto = sprites + "/texto"
 
 class TextBox(object):
-    "cria uma região especial que escreve um lista de textos, com quebra de linha"
-    pass
+    "cria uma regiao para escrever textos"
+
+    #atributos da textBox
+    x = 0 #posicao em relação ao referencial
+    y = 0 #posicao em relacao ao referencial
+    width = 0 #largura da textbox
+    height = 0 #altura da textbox
+    sentidoVertical = "cima" #sentido para onde são criadas as linhas, "cima" ou "baixo"
+    velocidadeVertical = 0 #velocidade ao adiconar uma nova linha
+    velocidadeHorizontal = 0 #tempo que demora para escrever 100 caracteres
+    sentidoHorizontal = "direita" #sentido onde é escrito o texto
+    primeiraLinha = ("baixo","esquerda") #posicao inicial da primeira linha
+    entreLinhas = 0 #espaçamento entre as linhas
+    tabulacao = 0 #quantidade de " " numa tabulação
+
+    #atributos de linha
+    linhas = [] #lista de linhas da textBox
+    linhaAtual = 0 #linha atual da textBox
+    caracterAtual = 0 #caracter atual num texto, deverá sempre retornar a zero no final do texto
+
+
+    #atributos da fonte
+    fontePadrao = {'fonte':None,'antialias':False,'cor':Color(255,255,255),'corFundo':None,'bold':False,'italic':False}  #dicionario com configurações da fonte
+    fontesExtras ={} #um dicionario de dicionario, a chave é o nome da fonte e o valor é um dicionario nos moldes da fonte padrão
+
+    def __init__(self,intX,intY,intWidth,intHeight,intVelocidadeVertical,intVelocidadeHorizontal,strFonte,intTamanhoFonte,colorCorFonte=(255,255,255),colorCorFundoFonte=None,boolBoldFonte=False,bollItalicFonte=False,bollAntialias=False,strSentidoVertical="cima",strSentidoHorizontal="direita",tuplePrimeiraLinha=("baixo","esquerda"),intEntreLinhas=0,intTabulacao=0):
+
+        #atributos da textBox
+        self.x = intX
+        self.y = intY
+        self.width = intWidth
+        self.height = intHeight
+        self.sentidoHorizontal = strSentidoHorizontal
+        self.sentidoVertical = strSentidoVertical
+        self.velocidadeHorizontal = intVelocidadeHorizontal
+        self.velocidadeVertical = intVelocidadeVertical
+        self.primeiraLinha = tuplePrimeiraLinha
+        self.entreLinha = intEntreLinhas
+        self.tabulacao = intTabulacao
+
+        #atributos da fonte
+        self.fontePadrao['fonte'] = font.Font(fontes + "/" + str(strFonte),intTamanhoFonte)
+        self.fontePadrao['antialias'] = bollAntialias
+        self.fontePadrao['cor'] = colorCorFonte
+        self.fontePadrao['corFundo'] = colorCorFundoFonte
+        self.fontePadrao['bold'] = boolBoldFonte
+        self.fontePadrao['italic'] = bollItalicFonte
+
+    def adicionaFonte(self,strNome,strFonte,intTamanhoFonte,colorCorFonte=(255,255,255),colorCorFundoFonte=None,boolBoldFonte=False,bollItalicFonte=False,bollAntialias=False):
+
+        self.fontesExtras[str(strNome)] = {'fonte':font.Font(fontes + "/" + str(strFonte),intTamanhoFonte),'antialias':bollAntialias,'cor':colorCorFonte,'corFundo':colorCorFundoFonte,'bold':boolBoldFonte,'italic':bollItalicFonte}
+
+    def escreveTexto(self,texto,strNomeFonte):
+        "escreve um texto utilizando a fonte referida"
+
+        #22/06/18 20:00
+        #para fazer o typewriter preciso criar uma variavel que mantem o texto sendo escrito atualmente
+        #esse buffer têm que ser esvaziado, uma fila de texto para entrar no buffer faz sentido
+        #porém, será que isso podera causar uma disicronia entre a velocidade do texto e das ações do jogo?
+        #será que, nesse jogo, typewriter é valido? talvez um muito rápido para não dar estranheza
+        #solução a testar
+        #ao enviar um texto para escrever, ele é enviado ao fim da lista chamada filaTextos
+        #uma funcao adiciona Texto ficara responsavel por adicionar o texto
+        #será enviado a fila uma tupla com o texto e a fonte para ser utilizado na função de escrita
+        #a função atualizaBuffer verifica primeiramente se o buffer está vazio
+        #estando vazio, ela procura textos na lista
+        #um texto da linha pode ser chamado de ("$novaLinha",None), somente nesse caso, o buffer chamar a função novaLinha
+        #se tiver algum texto na fila (e o buffer vazio) ele joga esse texto e remove da fila
+        #se não tiver nada, ele encerra
+        #a função escreve texto, pega o primeiro caracter do buffer e renderiza a direita do texto atual
+        #ele utiliza espacamento entre caracteres, que pode ser 0
+        #apos renderizar, ele remove o caracter do buffer
+        #antes de renderizar, ele verifica se ao renderizar vai estourar a caixa, se isso for ocorrer ele
+        #quebra a linha
+        #preciso pensar na forma mais elegante de fazer isso
+        #uma possibilidade, é primeiro puxar todos os carcteres até um " " ou fim do texto
+        #isso é uma palavra
+        #se a palavra for estourar a caixa de texto, quebrar
+        #se não, continua
+        #desse modo, quebra-se até o espaço
+        #se for quebrar, pensar num modo eficiente de fazer isso
+        #atualizaBuffer e escreve texto ficam sendo chamadas a cada frame
+
+        if(strNomeFonte == "fontePadrao"):
+
+            self.fontePadrao['fonte'].set_bold(self.fontePadrao['bold'])
+            self.fontePadrao['fonte'].set_italic(self.fontePadrao['italic'])
+
+
+        else:
+
+            self.fontesExtras[strNomeFonte]['fonte'].set_bold(self.fontesExtras[strNomeFonte]['bold'])
+            self.fontesExtras[strNomeFonte]['fonte'].set_italic(self.fontesExtras[strNomeFonte]['italic'])
+
+
 
 class Regiao(object):
 
@@ -836,3 +927,19 @@ def ancorar(objeto,window,ancoraHorizontal = "tela", strTipoAncoraHorizontal = "
         else:
 
             objeto.y = ancoraVertical.y + (ancoraVertical.height/2) - (objeto.height/2) + intDeslocamentoY
+
+def moldar(objeto,window,regiao="tela",bordaEsquerda=0,bordaDireita=0,bordaSuperior=0,bordaInferior=0):
+    "aninha um objeto em uma referencia e molda seu tamanho em relação a referencia"
+
+
+    aninhar(objeto,window,regiao,"esquerda","acima",bordaEsquerda,bordaSuperior) #aninha o objeto desejado na referencia
+
+    if(regiao=="tela"):
+
+        objeto.width = window.width - (bordaEsquerda + bordaDireita)
+        objeto.height = window.height - (bordaSuperior + bordaInferior)
+
+    else:
+
+        objeto.width = regiao.width - (bordaEsquerda + bordaDireita)
+        objeto.height = regiao.height - (bordaSuperior + bordaInferior)
