@@ -1,17 +1,21 @@
-#aqui ficarão localizadas as classes de interface, no momento temos as seguintes:
-#Regiao: uma regiao da tela, visualmente visivel
-#Area: uma regiao da tela, visualmente visivel, que está dentro de outra região
-#Texto: classe para geração de texto e seleção de fontes e seus atributos
-#Menu: classe que gera menus
-#Ancorar e aninhar. Funções gerais que servem para posicionar elementos na tela
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-from pygame import *
+#aqui ficarï¿½o localizadas as classes de interface, no momento temos as seguintes:
+#Regiao: uma regiao da tela, visualmente visivel
+#Area: uma regiao da tela, visualmente visivel, que estï¿½ dentro de outra regiï¿½o
+#Texto: classe para geraï¿½ï¿½o de texto e seleï¿½ï¿½o de fontes e seus atributos
+#Menu: classe que gera menus
+#Ancorar e aninhar. Funï¿½ï¿½es gerais que servem para posicionar elementos na tela
+
+import pygame
 from PPlay.window import *
 from PPlay.sprite import *
 from PPlay.gameimage import *
 from PPlay.animation import *
 
-font.init() #inicializa modulo de fontes
+pygame.screen.init()
+pygame.font.init() #inicializa modulo de fontes
 
 listaSelecionavel = {} #lista de todos os objetos selecionaveis
 # listaFontes = {} #lista de todas as fontes
@@ -27,27 +31,29 @@ class TextBox(object):
     "cria uma regiao para escrever textos"
 
     #atributos da textBox
-    x = 0 #posicao em relação ao referencial
+    x = 0 #posicao em relaï¿½ï¿½o ao referencial
     y = 0 #posicao em relacao ao referencial
     width = 0 #largura da textbox
     height = 0 #altura da textbox
-    sentidoVertical = "cima" #sentido para onde são criadas as linhas, "cima" ou "baixo"
+    sentidoVertical = "cima" #sentido para onde sï¿½o criadas as linhas, "cima" ou "baixo"
     velocidadeVertical = 0 #velocidade ao adiconar uma nova linha
     velocidadeHorizontal = 0 #tempo que demora para escrever 100 caracteres
-    sentidoHorizontal = "direita" #sentido onde é escrito o texto
+    sentidoHorizontal = "direita" #sentido onde ï¿½ escrito o texto
     primeiraLinha = ("baixo","esquerda") #posicao inicial da primeira linha
-    entreLinhas = 0 #espaçamento entre as linhas
-    tabulacao = 0 #quantidade de " " numa tabulação
+    entreLinhas = 0 #espaï¿½amento entre as linhas
+    tabulacao = 0 #quantidade de " " numa tabulaï¿½ï¿½o
 
     #atributos de linha
     linhas = [] #lista de linhas da textBox
     linhaAtual = 0 #linha atual da textBox
-    caracterAtual = 0 #caracter atual num texto, deverá sempre retornar a zero no final do texto
+    caracterAtual = 0 #caracter atual num texto, deverï¿½ sempre retornar a zero no final do texto
+    bufferTexto = ""
+    filaTexto = []
 
 
     #atributos da fonte
-    fontePadrao = {'fonte':None,'antialias':False,'cor':Color(255,255,255),'corFundo':None,'bold':False,'italic':False}  #dicionario com configurações da fonte
-    fontesExtras ={} #um dicionario de dicionario, a chave é o nome da fonte e o valor é um dicionario nos moldes da fonte padrão
+    fontePadrao = {'fonte':None,'antialias':False,'cor':Color(255,255,255),'corFundo':None,'bold':False,'italic':False}  #dicionario com configuraï¿½ï¿½es da fonte
+    fontesExtras ={} #um dicionario de dicionario, a chave ï¿½ o nome da fonte e o valor ï¿½ um dicionario nos moldes da fonte padrï¿½o
 
     def __init__(self,intX,intY,intWidth,intHeight,intVelocidadeVertical,intVelocidadeHorizontal,strFonte,intTamanhoFonte,colorCorFonte=(255,255,255),colorCorFundoFonte=None,boolBoldFonte=False,bollItalicFonte=False,bollAntialias=False,strSentidoVertical="cima",strSentidoHorizontal="direita",tuplePrimeiraLinha=("baixo","esquerda"),intEntreLinhas=0,intTabulacao=0):
 
@@ -65,7 +71,7 @@ class TextBox(object):
         self.tabulacao = intTabulacao
 
         #atributos da fonte
-        self.fontePadrao['fonte'] = font.Font(fontes + "/" + str(strFonte),intTamanhoFonte)
+        self.fontePadrao['fonte'] = pygame.font.Font(fontes + "/" + str(strFonte),intTamanhoFonte)
         self.fontePadrao['antialias'] = bollAntialias
         self.fontePadrao['cor'] = colorCorFonte
         self.fontePadrao['corFundo'] = colorCorFundoFonte
@@ -74,36 +80,50 @@ class TextBox(object):
 
     def adicionaFonte(self,strNome,strFonte,intTamanhoFonte,colorCorFonte=(255,255,255),colorCorFundoFonte=None,boolBoldFonte=False,bollItalicFonte=False,bollAntialias=False):
 
-        self.fontesExtras[str(strNome)] = {'fonte':font.Font(fontes + "/" + str(strFonte),intTamanhoFonte),'antialias':bollAntialias,'cor':colorCorFonte,'corFundo':colorCorFundoFonte,'bold':boolBoldFonte,'italic':bollItalicFonte}
+        self.fontesExtras[str(strNome)] = {'fonte':pygame.font.Font(fontes + "/" + str(strFonte),intTamanhoFonte),'antialias':bollAntialias,'cor':colorCorFonte,'corFundo':colorCorFundoFonte,'bold':boolBoldFonte,'italic':bollItalicFonte}
+
+    def adicionaTexto(self,strTexto,strNomeFonte):
+
+        self.filaTexto.append(strTexto,strNomeFonte)
+
+    def novaLinha(self):
+
+        self.filaTexto.append("!novaTexto",None)
+
+    def atualizaTexto(self):
+
+        if self.bufferTexto == "":
+
+            pass
 
     def escreveTexto(self,texto,strNomeFonte):
         "escreve um texto utilizando a fonte referida"
 
         #22/06/18 20:00
         #para fazer o typewriter preciso criar uma variavel que mantem o texto sendo escrito atualmente
-        #esse buffer têm que ser esvaziado, uma fila de texto para entrar no buffer faz sentido
-        #porém, será que isso podera causar uma disicronia entre a velocidade do texto e das ações do jogo?
-        #será que, nesse jogo, typewriter é valido? talvez um muito rápido para não dar estranheza
-        #solução a testar
-        #ao enviar um texto para escrever, ele é enviado ao fim da lista chamada filaTextos
+        #esse buffer tï¿½m que ser esvaziado, uma fila de texto para entrar no buffer faz sentido
+        #porï¿½m, serï¿½ que isso podera causar uma disicronia entre a velocidade do texto e das aï¿½ï¿½es do jogo?
+        #serï¿½ que, nesse jogo, typewriter ï¿½ valido? talvez um muito rï¿½pido para nï¿½o dar estranheza
+        #soluï¿½ï¿½o a testar
+        #ao enviar um texto para escrever, ele ï¿½ enviado ao fim da lista chamada filaTextos
         #uma funcao adiciona Texto ficara responsavel por adicionar o texto
-        #será enviado a fila uma tupla com o texto e a fonte para ser utilizado na função de escrita
-        #a função atualizaBuffer verifica primeiramente se o buffer está vazio
+        #serï¿½ enviado a fila uma tupla com o texto e a fonte para ser utilizado na funï¿½ï¿½o de escrita
+        #a funï¿½ï¿½o atualizaBuffer verifica primeiramente se o buffer estï¿½ vazio
         #estando vazio, ela procura textos na lista
-        #um texto da linha pode ser chamado de ("$novaLinha",None), somente nesse caso, o buffer chamar a função novaLinha
+        #um texto da linha pode ser chamado de ("$novaLinha",None), somente nesse caso, o buffer chamar a funï¿½ï¿½o novaLinha
         #se tiver algum texto na fila (e o buffer vazio) ele joga esse texto e remove da fila
-        #se não tiver nada, ele encerra
-        #a função escreve texto, pega o primeiro caracter do buffer e renderiza a direita do texto atual
+        #se nï¿½o tiver nada, ele encerra
+        #a funï¿½ï¿½o escreve texto, pega o primeiro caracter do buffer e renderiza a direita do texto atual
         #ele utiliza espacamento entre caracteres, que pode ser 0
         #apos renderizar, ele remove o caracter do buffer
         #antes de renderizar, ele verifica se ao renderizar vai estourar a caixa, se isso for ocorrer ele
         #quebra a linha
         #preciso pensar na forma mais elegante de fazer isso
-        #uma possibilidade, é primeiro puxar todos os carcteres até um " " ou fim do texto
-        #isso é uma palavra
+        #uma possibilidade, ï¿½ primeiro puxar todos os carcteres atï¿½ um " " ou fim do texto
+        #isso ï¿½ uma palavra
         #se a palavra for estourar a caixa de texto, quebrar
-        #se não, continua
-        #desse modo, quebra-se até o espaço
+        #se nï¿½o, continua
+        #desse modo, quebra-se atï¿½ o espaï¿½o
         #se for quebrar, pensar num modo eficiente de fazer isso
         #atualizaBuffer e escreve texto ficam sendo chamadas a cada frame
 
@@ -122,24 +142,24 @@ class TextBox(object):
 
 class Regiao(object):
 
-    #classe que define uma região visivel na tela
+    #classe que define uma regiï¿½o visivel na tela
 
     #atributos
 
-    # nome = "" #um nome para região (OPICIONAL), adicionar futuramente
-    borda = "" #uma imagem padrão geralmente utilizada para definir a borda e outros detalhes
+    # nome = "" #um nome para regiï¿½o (OPICIONAL), adicionar futuramente
+    borda = "" #uma imagem padrï¿½o geralmente utilizada para definir a borda e outros detalhes
     tamanhoBorda = (0,0) #a espessura da borda horizontal e vertical
-    fundo = "" #um fundo para a região, esse fundo fica sobre a base, util quando existe uma borda e um fundo variavel
-    selecionavel = False #determina se o cursor pode se posicionar em certa região da tela
-    ordemSelecao = 0 #determina a ordem que o cursor ira passar, nem sempre é exata devido a sub-menus, somente se selecionavel for True
-    # corFundo = (0,0,0) #é a cor de fundo caso não exista nenhuma base na região
-    width = 0 #a largura da região
+    fundo = "" #um fundo para a regiï¿½o, esse fundo fica sobre a base, util quando existe uma borda e um fundo variavel
+    selecionavel = False #determina se o cursor pode se posicionar em certa regiï¿½o da tela
+    ordemSelecao = 0 #determina a ordem que o cursor ira passar, nem sempre ï¿½ exata devido a sub-menus, somente se selecionavel for True
+    # corFundo = (0,0,0) #ï¿½ a cor de fundo caso nï¿½o exista nenhuma base na regiï¿½o
+    width = 0 #a largura da regiï¿½o
     height = 0 #a altura da regiao
-    x = 0 #a posição x da região
-    y = 0 #a posição y da região
+    x = 0 #a posiï¿½ï¿½o x da regiï¿½o
+    y = 0 #a posiï¿½ï¿½o y da regiï¿½o
 
-    # fundoX = 0 #a posição x do fundo em relação a região
-    # fundoY = 0 #a posição y do fundo em relação a região
+    # fundoX = 0 #a posiï¿½ï¿½o x do fundo em relaï¿½ï¿½o a regiï¿½o
+    # fundoY = 0 #a posiï¿½ï¿½o y do fundo em relaï¿½ï¿½o a regiï¿½o
 
 
 
@@ -147,7 +167,7 @@ class Regiao(object):
 
     def __init__(self,intX,intY,window,spriteBorda, intTamanhoBordaX, intTamanhoBordaY, regiaoHorizontal = "tela", strTipoAncoraHorizontal = "direita", regiaoVertical = "tela", strTipoAncoraVertical = "abaixo", spriteFundo="", intFundoX = 0, intFundoY = 0, boolSelecionavel = False, intOrdemSelecao = -1 ):
 
-        "x e y é o deslocamento em relação a ancora, invertido no caso de esquerda e acima. Dados de aconramento ver função ancorarNaRegiao"
+        "x e y ï¿½ o deslocamento em relaï¿½ï¿½o a ancora, invertido no caso de esquerda e acima. Dados de aconramento ver funï¿½ï¿½o ancorarNaRegiao"
 
         self.setBorda(spriteBorda,intTamanhoBordaX,intTamanhoBordaY)
         ancorar(self.getBorda(),window,regiaoHorizontal,strTipoAncoraHorizontal,regiaoVertical,strTipoAncoraVertical)
@@ -181,7 +201,7 @@ class Regiao(object):
 
     def setBorda(self,spriteBase,tamX,tamY):
 
-        "o argumento deve ser o endereço do sprite, para facilitar o endereço deve começar a partir da pasta interface"
+        "o argumento deve ser o endereï¿½o do sprite, para facilitar o endereï¿½o deve comeï¿½ar a partir da pasta interface"
 
         self.borda = Sprite(interface + spriteBase)
         self.tamanhoBorda = (tamX,tamY)
@@ -277,7 +297,7 @@ class Regiao(object):
 
     def setFundo(self,spriteFundo,intX,intY):
 
-        "o argumento deve ser o endereço do sprite, para facilitar o endereço deve começar a partir da pasta interface"
+        "o argumento deve ser o endereï¿½o do sprite, para facilitar o endereï¿½o deve comeï¿½ar a partir da pasta interface"
 
         self.fundo = Sprite(interface + spriteFundo)
         self.fundo.x = self.borda.x + self.tamanhoBorda[0] + int(intX)
@@ -328,7 +348,7 @@ class Regiao(object):
 
     # def ancorarNaRegiao(self,objeto,window,regiaoHorizontal = "tela", strTipoAncoraHorizontal = "direita", regiaoVertical = "tela", strTipoAncoraVertical = "abaixo"):
     #
-    #     "ancora o objeto (que deve ter coordenadas existentes) em relação a uma região, o tipo de ancora horizontal pode ser (direita),(esquerda) e a vertical pode ser (acima) ou (abaixo)"
+    #     "ancora o objeto (que deve ter coordenadas existentes) em relaï¿½ï¿½o a uma regiï¿½o, o tipo de ancora horizontal pode ser (direita),(esquerda) e a vertical pode ser (acima) ou (abaixo)"
     #
     #     if(regiaoHorizontal == "tela"):
     #
@@ -385,7 +405,7 @@ class Pilha(object):
 
     def __init__(self,window,listaObjetos,intEspacamento=0,strAncora = "tela",strAlinhamento = "esquerda",bollSelecionavel = "False"):
 
-        #intEspacamento é o espaço entre os itens da pilha
+        #intEspacamento ï¿½ o espaï¿½o entre os itens da pilha
 
         self.selecionavel = bollSelecionavel
         janela = window
@@ -759,7 +779,7 @@ class Cursor(object):
         self.spriteCursorAtual.x = referencia.x + referencia.width
         self.spriteCursorAtual.y = referencia.y + (referencia.height/2) - (self.spriteCursorAtual.height/2)
 
-        if(self.spriteCursorAtual.x > (janela.width - self.spriteCursorAtual.width)): #fazer função que espelhe o cursor
+        if(self.spriteCursorAtual.x > (janela.width - self.spriteCursorAtual.width)): #fazer funï¿½ï¿½o que espelhe o cursor
 
             self.spriteCursorAtual = self.spriteCursorEspelhado
             self.spriteCursorAtual.x = referencia.x - self.spriteCursorAtual.width
@@ -869,7 +889,7 @@ def aninhar(objeto,window, regiao="tela", strTipoAlinhamentoHorizontal = "esquer
 
 def ancorar(objeto,window,ancoraHorizontal = "tela", strTipoAncoraHorizontal = "direita", ancoraVertical = "tela", strTipoAncoraVertical = "abaixo", intDeslocamentoX = 0, intDeslocamentoY = 0):
 
-    "ancora o objeto (que deve ter coordenadas existentes) em relação a uma região, o tipo de ancora horizontal pode ser (direita),(esquerda) e a vertical pode ser (acima) ou (abaixo)"
+    "ancora o objeto (que deve ter coordenadas existentes) em relaï¿½ï¿½o a uma regiï¿½o, o tipo de ancora horizontal pode ser (direita),(esquerda) e a vertical pode ser (acima) ou (abaixo)"
 
     if(ancoraHorizontal == "tela"):
 
@@ -929,7 +949,7 @@ def ancorar(objeto,window,ancoraHorizontal = "tela", strTipoAncoraHorizontal = "
             objeto.y = ancoraVertical.y + (ancoraVertical.height/2) - (objeto.height/2) + intDeslocamentoY
 
 def moldar(objeto,window,regiao="tela",bordaEsquerda=0,bordaDireita=0,bordaSuperior=0,bordaInferior=0):
-    "aninha um objeto em uma referencia e molda seu tamanho em relação a referencia"
+    "aninha um objeto em uma referencia e molda seu tamanho em relaï¿½ï¿½o a referencia"
 
 
     aninhar(objeto,window,regiao,"esquerda","acima",bordaEsquerda,bordaSuperior) #aninha o objeto desejado na referencia
