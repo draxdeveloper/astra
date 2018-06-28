@@ -123,11 +123,99 @@ class Jogador(object):
     spAtual = 0 #total de SP atual
     listaStatus = [] #efeitos ativos
 
+    bonusForca = 0
+    bonusVigor = 0
+    bonusPrecisao = 0
+    bonusEvasao = 0
+
+    defictForca = 0
+    defictVigor = 0
+    defictPrecisao = 0
+    defictEvasao = 0
+
+    forcaTotal = 0
+    vigorTotal = 0
+    precisaoTotal = 0
+    evasaoTotal = 0
+
     def __init__(self,Astra):
 
         self.astra = Astra
         self.hpAtual = self.astra.hpTotal
         self.spAtual = self.astra.spTotal
+
+        self.atualizaAtributos()
+
+    def atualizaAtributos(self):
+
+        self.forcaTotal = self.astra.forca + self.bonusForca - self.defictForca
+        self.vigorTotal = self.astra.vigor + self.bonusVigor - self.defictVigor
+        self.precisaoTotal = self.astra.precisao + self.bonusPrecisao - self.defictPrecisao
+        self.evasaoTotal = self.astra.evasao + self.bonusEvasao - self.defictEvasao
+
+    def resetaModificadores(self):
+
+        self.bonusForca = 0
+        self.bonusVigor = 0
+        self.bonusPrecisao = 0
+        self.bonusEvasao = 0
+
+        self.defictForca = 0
+        self.defictVigor = 0
+        self.defictPrecisao = 0
+        self.defictEvasao = 0
+
+class Inimigo(object):
+
+    astra = ""  # recebe um Astra
+
+    hpAtual = 0  # total de HP atual
+    spAtual = 0  # total de SP atual
+    listaStatus = []  # efeitos ativos
+
+    bonusForca = 0
+    bonusVigor = 0
+    bonusPrecisao = 0
+    bonusEvasao = 0
+
+    defictForca = 0
+    defictVigor = 0
+    defictPrecisao = 0
+    defictEvasao = 0
+
+    forcaTotal = 0
+    vigorTotal = 0
+    precisaoTotal = 0
+    evasaoTotal = 0
+
+    def __init__(self, Astra):
+
+        self.astra = Astra
+        self.hpAtual = self.astra.hpTotal
+        self.spAtual = self.astra.spTotal
+
+        self.atualizaAtributos()
+
+
+    def atualizaAtributos(self):
+
+        self.forcaTotal = self.astra.forca + self.bonusForca - self.defictForca
+        self.vigorTotal = self.astra.vigor + self.bonusVigor - self.defictVigor
+        self.precisaoTotal = self.astra.precisao + self.bonusPrecisao - self.defictPrecisao
+        self.evasaoTotal = self.astra.evasao + self.bonusEvasao - self.defictEvasao
+
+
+    def resetaModificadores(self):
+
+        self.bonusForca = 0
+        self.bonusVigor = 0
+        self.bonusPrecisao = 0
+        self.bonusEvasao = 0
+
+        self.defictForca = 0
+        self.defictVigor = 0
+        self.defictPrecisao = 0
+        self.defictEvasao = 0
 
 class Astra(object):
 
@@ -144,11 +232,11 @@ class Astra(object):
 
     forca = 20 #força do astra
     vigor = 20 #vigor do astra
-    precisao = 20  #precisao do astra
-    evasao = 20 #evasao do astra
+    precisao = 90  #precisao do astra
+    evasao = 30 #evasao do astra
 
-    spTotal = 10 * precisao
-    hpTotal = 10 * vigor
+    hpTotal = 400
+    spTotal = 200
 
     tecnicaElemento = None
     tecnicaAlinhamento = None
@@ -375,10 +463,10 @@ tecInspirar = Tecnica("inspirar","polar","yang","passivaPositiva","a cada turno,
 tecLoucura = Tecnica("loucura","polar","yin","passivaNegativa","a cada turno, reduz um atributo aleatório do inimigo durante um turno",40,0,-20,100,effInsanidade)
 
 #tecnicas de elemento
-tecHellfire = Tecnica("infeno","elemental","fogo","ofensivaPura","o fogo infernal da muito dano, porém é fácil de esquivar",20,50,-40,0,None)
+tecHellfire = Tecnica("hellfire","elemental","fogo","ofensivaPura","o fogo infernal da muito dano, porém é fácil de esquivar",20,40,-50,0,None)
 tecCura = Tecnica("cura","elemental","agua","passivaPositiva","cura um pouco de HP",30,0,-10,0,None)
 tecLullaby = Tecnica("lullaby","elemental","vento","passivaNegativa","faz o inimigo dormir",30,0,-20,100,effDormir)
-tecAbsorver = Tecnica("absorver","elemental","terra","ofensivaPura","absorve um pouco do dano dado no inimigo",20,20,-10,0,None)
+tecAbsorver = Tecnica("absorver","elemental","terra","ofensivaPura","absorve um pouco do dano dado no inimigo",20,10,-10,0,None)
 
 #tecnicas de emblema
 tecEncontrao = Tecnica("encontrão","emblematica","espada","ofensivaPura","lança o seu corpo contra o inimigo, recebendo dano de volta",20,0,-10,0,None)
@@ -387,7 +475,7 @@ tecEspelho = Tecnica("espelho","emblematica","escudo","passivaPositiva","aplica 
 #tecnicas unicas
 
 #orbs elementais (yang espada)
-tecSuperNova = Tecnica("supernova","unica","yang_espada_fogo","ofensivaPura","uma explosão de dano massivo, porém de alto custo",100,100,-15,0,None)
+tecSuperNova = Tecnica("supernova","unica","yang_espada_fogo","ofensivaPura","uma explosão de dano massivo, porém de alto custo",95,100,-20,0,None)
 
 #golens
 tecQueimar = Tecnica("queimar","unica","yang_escudo_fogo","passivaNegativa","queima um pouco do SP do inimigo",20,0,-10,0,None)

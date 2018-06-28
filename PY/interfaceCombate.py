@@ -6,15 +6,32 @@
 import pygame
 import sys
 from astra import *
+from cursor import *
+from combate import *
 
 # from PPlay.window import *
 # from PPlay.sprite import *
 # from PPlay.gameimage import *
 # from PPlay.animation import *
+#
+# dictPosicaoCursor = {} #lista com as posições do cursor
+# posicaoAtual = ""
+
+
+# def adicionaPosicaoCursor(strTag,tuplePosicao):
+#
+#     dictPosicaoCursor[str(strTag)] = tuplePosicao
+
+# def mudaPosicaoCursor(strNovaPosicao):
+#
+#     posicaoAtual = strNovaPosicao
 
 def main():
 
     jogador = Jogador(astIgni)
+    inimigo = Inimigo(astIgni)
+    turnos = Turnos(jogador,inimigo)
+    ai = AI(jogador,inimigo,turnos)
 
     #inicializa modulos
 
@@ -54,6 +71,8 @@ def main():
 
     janela = pygame.display.set_mode((janelaLargura,janelaAltura))
 
+    cursor = Cursor(janela,interface + "/glove3.png", interface + "/glove3Espelhada.png")
+
     AZUL = (0,0,255)
     PRETO = (0,0,0)
     BRANCO = (255,255,255)
@@ -70,13 +89,13 @@ def main():
 
     #região imagem do inimigo
     regiaoImagemInimigo = pygame.image.load(interfaceCombate + "/fundoTeste.jpg")
-    regiaoImagemInimigo = pygame.transform.scale(regiaoImagemInimigo,(int(unidadeAltura*6),int(unidadeAltura*6)))
+    regiaoImagemInimigo = pygame.transform.scale(regiaoImagemInimigo,(int(unidadeAltura*5.5),int(unidadeAltura*5.5)))
     pygame.draw.rect(regiaoImagemInimigo, AZUL, (0, 0, regiaoImagemInimigo.get_width(), regiaoImagemInimigo.get_height()), larguraBorda)
     larguraRestante -= regiaoImagemInimigo.get_width()
     alturaRestante -= regiaoImagemInimigo.get_height()
 
     #>imagem do inimigo
-    imagemInimigo = pygame.image.load(jogador.astra.sprite)
+    imagemInimigo = pygame.image.load(inimigo.astra.sprite)
 
     #região nome do inimigo
     regiaoNomeInimigo = pygame.Surface((int(larguraRestante/2),int(regiaoImagemInimigo.get_height()/9)*2))
@@ -85,11 +104,11 @@ def main():
     larguraRestante -= regiaoNomeInimigo.get_width()
 
     #nome do inimigo
-    strFonteTextoNomeInimigo = jogador.astra.fonte
+    strFonteTextoNomeInimigo = inimigo.astra.fonte
     tamanhoTextoNomeInimigo = 70
     fonteTextoNomeInimigo = pygame.font.Font(strFonteTextoNomeInimigo, tamanhoTextoNomeInimigo)
-    corTextoNomeInimigo = jogador.astra.corFonte
-    textoNomeInimigo = jogador.astra.nome
+    corTextoNomeInimigo = inimigo.astra.corFonte
+    textoNomeInimigo = inimigo.astra.nome
     nomeInimigo = fonteTextoNomeInimigo.render(textoNomeInimigo,True,corTextoNomeInimigo)
 
     #região icones inimigo
@@ -98,15 +117,15 @@ def main():
     pygame.draw.rect(regiaoIconesInimigo,AZUL,(0,0,regiaoIconesInimigo.get_width(),(regiaoIconesInimigo.get_height())),larguraBorda)
 
     #icone do elemento do inimigo
-    iconeElementoInimigo = pygame.image.load(jogador.astra.elemento.icone)
+    iconeElementoInimigo = pygame.image.load(inimigo.astra.elemento.icone)
     iconeElementoInimigo = pygame.transform.scale(iconeElementoInimigo,(regiaoIconesInimigo.get_height()-(larguraBorda*2),regiaoIconesInimigo.get_height()-(larguraBorda*2)))
 
     # icone do alinhamento do inimigo
-    iconeAlinhamentoInimigo = pygame.image.load(jogador.astra.alinhamento.icone)
+    iconeAlinhamentoInimigo = pygame.image.load(inimigo.astra.alinhamento.icone)
     iconeAlinhamentoInimigo = pygame.transform.scale(iconeAlinhamentoInimigo,(regiaoIconesInimigo.get_height()-(larguraBorda*2),regiaoIconesInimigo.get_height()-(larguraBorda*2)))
 
     # icone do emblema do inimigo
-    iconeEmblemaInimigo = pygame.image.load(jogador.astra.emblema.icone)
+    iconeEmblemaInimigo = pygame.image.load(inimigo.astra.emblema.icone)
     iconeEmblemaInimigo = pygame.transform.scale(iconeEmblemaInimigo,(regiaoIconesInimigo.get_height()-(larguraBorda*2),regiaoIconesInimigo.get_height()-(larguraBorda*2)))
 
     #região texto principal
@@ -125,8 +144,8 @@ def main():
     tamanhoTextoHPInimigo = 30
     fonteTextoHPInimigo = pygame.font.Font(strFonteTextoHPInimigo, tamanhoTextoHPInimigo)
     corTextoHPInimigo = (255, 255, 255)
-    valorHPInimigoAtual = jogador.hpAtual
-    valorHPInimigoTotal = jogador.astra.hpTotal
+    valorHPInimigoAtual = inimigo.hpAtual
+    valorHPInimigoTotal = inimigo.astra.hpTotal
     textoHPInimigo1 = "HP"
     textoHPInimigo2 = str(valorHPInimigoAtual) + "/" + str(valorHPInimigoTotal)
     HPInimigo1 = fonteTextoHPInimigo.render(textoHPInimigo1, True, corTextoHPInimigo)
@@ -142,8 +161,8 @@ def main():
     tamanhoTextoSPInimigo = 30
     fonteTextoSPInimigo = pygame.font.Font(strFonteTextoSPInimigo, tamanhoTextoSPInimigo)
     corTextoSPInimigo = (255, 255, 255)
-    valorSPInimigoAtual = jogador.spAtual
-    valorSPInimigoTotal = jogador.astra.spTotal
+    valorSPInimigoAtual = inimigo.spAtual
+    valorSPInimigoTotal = inimigo.astra.spTotal
     textoSPInimigo1 = "SP"
     textoSPInimigo2 = str(valorSPInimigoAtual) + "/" + str(valorSPInimigoTotal)
     SPInimigo1 = fonteTextoSPInimigo.render(textoSPInimigo1, True, corTextoSPInimigo)
@@ -159,7 +178,7 @@ def main():
     tamanhoTextoForcaInimigo = 40
     fonteTextoForcaInimigo = pygame.font.Font(strFonteTextoForcaInimigo, tamanhoTextoForcaInimigo)
     corTextoForcaInimigo = (255, 255, 255)
-    valorForcaInimigo = jogador.astra.forca
+    valorForcaInimigo = inimigo.forcaTotal
     textoForcaInimigo = "Força: " + str(valorForcaInimigo)
     forcaInimigo = fonteTextoForcaInimigo.render(textoForcaInimigo, True, corTextoForcaInimigo)
 
@@ -168,7 +187,7 @@ def main():
     tamanhoTextoVigorInimigo = 40
     fonteTextoVigorInimigo = pygame.font.Font(strFonteTextoVigorInimigo, tamanhoTextoVigorInimigo)
     corTextoVigorInimigo = (255, 255, 255)
-    valorVigorInimigo = jogador.astra.vigor
+    valorVigorInimigo = inimigo.vigorTotal
     textoVigorInimigo = "Vigor: " + str(valorVigorInimigo)
     vigorInimigo = fonteTextoVigorInimigo.render(textoVigorInimigo, True, corTextoVigorInimigo)
 
@@ -177,7 +196,7 @@ def main():
     tamanhoTextoPrecisaoInimigo = 40
     fonteTextoPrecisaoInimigo = pygame.font.Font(strFonteTextoPrecisaoInimigo, tamanhoTextoPrecisaoInimigo)
     corTextoPrecisaoInimigo = (255, 255, 255)
-    valorPrecisaoInimigo = jogador.astra.precisao
+    valorPrecisaoInimigo = inimigo.precisaoTotal
     textoPrecisaoInimigo = "Precisão: " + str(valorPrecisaoInimigo)
     precisaoInimigo = fonteTextoPrecisaoInimigo.render(textoPrecisaoInimigo, True, corTextoPrecisaoInimigo)
 
@@ -186,20 +205,156 @@ def main():
     tamanhoTextoEvasaoInimigo = 40
     fonteTextoEvasaoInimigo = pygame.font.Font(strFonteTextoEvasaoInimigo, tamanhoTextoEvasaoInimigo)
     corTextoEvasaoInimigo = (255, 255, 255)
-    valorEvasaoInimigo = jogador.astra.evasao
+    valorEvasaoInimigo = inimigo.astra.evasao
     textoEvasaoInimigo = "Evasão: " + str(valorEvasaoInimigo)
     evasaoInimigo = fonteTextoEvasaoInimigo.render(textoEvasaoInimigo, True, corTextoEvasaoInimigo)
+
+    #regiao borda superior seleção de ação
+    regiaoBordaSuperiorSelecao = pygame.Surface((regiaoImagemInimigo.get_width(),alturaRestante/4))
+    regiaoBordaSuperiorSelecao.fill(PRETO)
+
+    #região borda inferior seleção de ação
+    regiaoBordaInferiorSelecao = regiaoBordaSuperiorSelecao
+
+    #borda superior seleção de ação
+    decoracaoBorda = pygame.image.load(interfaceCombate + "/decoracao4elementos.png")
+    decoracaoBorda = pygame.transform.scale(decoracaoBorda,(int(regiaoBordaSuperiorSelecao.get_width()/3),regiaoBordaSuperiorSelecao.get_height()))
+
+    #regiao seleção de ataque
+    regiaoSelecaoAtaque = pygame.Surface((regiaoImagemInimigo.get_width()/3,regiaoBordaSuperiorSelecao.get_height()))
+    regiaoSelecaoAtaque.fill(PRETO)
+    pygame.draw.rect(regiaoSelecaoAtaque,AZUL,(0,0,regiaoSelecaoAtaque.get_width(),regiaoSelecaoAtaque.get_height()),larguraBorda)
+    cursor.adicionaPosicao("ataque", (regiaoSelecaoAtaque.get_width(),regiaoImagemInimigo.get_height() + regiaoBordaSuperiorSelecao.get_height()*1.5))
+
+
+    #texto ATAQUE
+    strFonteTextoATAQUE = fontes + "/BebasNeue.ttf"
+    tamanhoTextoATAQUE = 40
+    fonteTextoATAQUE = pygame.font.Font(strFonteTextoATAQUE, tamanhoTextoATAQUE)
+    corTextoATAQUE = (255, 255, 255)
+    textoATAQUE = "ATAQUE"
+    selecaoATAQUE = fonteTextoATAQUE.render(textoATAQUE, True, corTextoATAQUE)
+
+    # regiao seleção de tecnica
+    regiaoSelecaoTecnica = pygame.Surface((regiaoSelecaoAtaque.get_width(),regiaoSelecaoAtaque.get_height()))
+    regiaoSelecaoTecnica.fill(PRETO)
+    pygame.draw.rect(regiaoSelecaoTecnica,AZUL,(0, 0,regiaoSelecaoTecnica.get_width(),regiaoSelecaoTecnica.get_height()), larguraBorda)
+    cursor.adicionaPosicao("tecnica", (regiaoSelecaoAtaque.get_width(), regiaoImagemInimigo.get_height() + regiaoBordaSuperiorSelecao.get_height() * 2.5))
+
+    # texto TECNICA
+    strFonteTextoTECNICA = fontes + "/BebasNeue.ttf"
+    tamanhoTextoTECNICA = 40
+    fonteTextoTECNICA = pygame.font.Font(strFonteTextoTECNICA, tamanhoTextoTECNICA)
+    corTextoTECNICA = (255, 255, 255)
+    textoTECNICA = "TÉCNICA"
+    selecaoTECNICA = fonteTextoTECNICA.render(textoTECNICA, True, corTextoTECNICA)
+
+    # regiao seleção de tecnica elemental
+    regiaoSelecaoTecnicaElemental = pygame.Surface((regiaoSelecaoAtaque.get_width(), regiaoSelecaoAtaque.get_height()))
+    regiaoSelecaoTecnicaElemental.fill((0,50,0))
+    pygame.draw.rect(regiaoSelecaoTecnicaElemental, AZUL,(0, 0, regiaoSelecaoTecnicaElemental.get_width(), regiaoSelecaoTecnicaElemental.get_height()), larguraBorda)
+    cursor.adicionaPosicao("elemental", (regiaoSelecaoAtaque.get_width()*2, regiaoImagemInimigo.get_height() + regiaoBordaSuperiorSelecao.get_height() * 1.5))
+
+    # texto TECNICA ELEMENTAL
+    strFonteTextoTECNICAELEMENTAL = fontes + "/BebasNeue.ttf"
+    tamanhoTextoTECNICAELEMENTAL = 30
+    fonteTextoTECNICAELEMENTAL = pygame.font.Font(strFonteTextoTECNICAELEMENTAL, tamanhoTextoTECNICAELEMENTAL)
+    corTextoTECNICAELEMENTAL = (255, 255, 255)
+    textoTECNICAELEMENTAL = inimigo.astra.tecnicaElemento.nome
+    selecaoTECNICAELEMENTAL = fonteTextoTECNICAELEMENTAL.render(textoTECNICAELEMENTAL, True, corTextoTECNICAELEMENTAL)
+
+    # regiao seleção de tecnica polares
+    regiaoSelecaoTecnicaPolar = pygame.Surface((regiaoSelecaoAtaque.get_width(), regiaoSelecaoAtaque.get_height()))
+    regiaoSelecaoTecnicaPolar.fill((0,50,0))
+    pygame.draw.rect(regiaoSelecaoTecnicaPolar,AZUL,(0,0,regiaoSelecaoTecnicaPolar.get_width(),regiaoSelecaoTecnicaPolar.get_height()),larguraBorda)
+    cursor.adicionaPosicao("polar", (regiaoSelecaoAtaque.get_width()*3, regiaoImagemInimigo.get_height() + regiaoBordaSuperiorSelecao.get_height() * 1.5))
+
+    # texto TECNICA POLAR
+    strFonteTextoTECNICAPOLAR = fontes + "/BebasNeue.ttf"
+    tamanhoTextoTECNICAPOLAR = 30
+    fonteTextoTECNICAPOLAR = pygame.font.Font(strFonteTextoTECNICAPOLAR, tamanhoTextoTECNICAPOLAR)
+    corTextoTECNICAPOLAR = (255, 255, 255)
+    textoTECNICAPOLAR = inimigo.astra.tecnicaAlinhamento.nome
+    selecaoTECNICAPOLAR = fonteTextoTECNICAPOLAR.render(textoTECNICAPOLAR, True, corTextoTECNICAPOLAR)
+
+    # regiao seleção de tecnica emblematicas
+    regiaoSelecaoTecnicaEmblema = pygame.Surface((regiaoSelecaoAtaque.get_width(), regiaoSelecaoAtaque.get_height()))
+    regiaoSelecaoTecnicaEmblema.fill((0, 50, 0))
+    pygame.draw.rect(regiaoSelecaoTecnicaEmblema,AZUL,(0,0,regiaoSelecaoTecnicaEmblema.get_width(),regiaoSelecaoTecnicaEmblema.get_height()),larguraBorda)
+    cursor.adicionaPosicao("emblema", (regiaoSelecaoAtaque.get_width()*2, regiaoImagemInimigo.get_height() + regiaoBordaSuperiorSelecao.get_height() * 2.5))
+
+
+    # texto TECNICA EMBLEMA
+    strFonteTextoTECNICAEMBLEMA = fontes + "/BebasNeue.ttf"
+    tamanhoTextoTECNICAEMBLEMA = 30
+    fonteTextoTECNICAEMBLEMA = pygame.font.Font(strFonteTextoTECNICAEMBLEMA, tamanhoTextoTECNICAEMBLEMA)
+    corTextoTECNICAEMBLEMA = (255, 255, 255)
+    textoTECNICAEMBLEMA = inimigo.astra.tecnicaEmblema.nome
+    selecaoTECNICAEMBLEMA = fonteTextoTECNICAEMBLEMA.render(textoTECNICAEMBLEMA, True, corTextoTECNICAEMBLEMA)
+
+    # regiao seleção de tecnica únicas
+    regiaoSelecaoTecnicaUnica = pygame.Surface((regiaoSelecaoAtaque.get_width(), regiaoSelecaoAtaque.get_height()))
+    regiaoSelecaoTecnicaUnica.fill((0, 50, 0))
+    pygame.draw.rect(regiaoSelecaoTecnicaUnica, AZUL, (0, 0, regiaoSelecaoTecnicaUnica.get_width(), regiaoSelecaoTecnicaUnica.get_height()), larguraBorda)
+    cursor.adicionaPosicao("unica", (regiaoSelecaoAtaque.get_width()*3, regiaoImagemInimigo.get_height() + regiaoBordaSuperiorSelecao.get_height() * 2.5))
+
+    # texto TECNICA UNICA
+    strFonteTextoTECNICAUNICA = fontes + "/BebasNeue.ttf"
+    tamanhoTextoTECNICAUNICA = 30
+    fonteTextoTECNICAUNICA = pygame.font.Font(strFonteTextoTECNICAUNICA, tamanhoTextoTECNICAUNICA)
+    corTextoTECNICAUNICA = (255, 255, 255)
+    textoTECNICAUNICA = inimigo.astra.tecnicaUnica.nome
+    selecaoTECNICAUNICA = fonteTextoTECNICAUNICA.render(textoTECNICAUNICA, True, corTextoTECNICAUNICA)
 
     #26 de junho
     #fazer a parte inferior da interface
     #fazer o sistema de combate, incluindo as tecnicas dos astras da sexta feira
 
     #game loop
-
     while(jogando==True):
 
         #eventos
         eventos = pygame.event.get()
+        # atualiza valores
+        valorHPInimigoAtual = inimigo.hpAtual
+        textoHPInimigo2 = str(valorHPInimigoAtual) + "/" + str(valorHPInimigoTotal)
+        HPInimigo2 = fonteTextoHPInimigo.render(textoHPInimigo2, True, corTextoHPInimigo)
+
+        valorSPInimigoAtual = inimigo.spAtual
+        textoSPInimigo2 = str(valorSPInimigoAtual) + "/" + str(valorSPInimigoTotal)
+        SPInimigo2 = fonteTextoSPInimigo.render(textoSPInimigo2, True, corTextoSPInimigo)
+
+        valorForcaInimigo = inimigo.forcaTotal
+        textoForcaInimigo = "Força: " + str(valorForcaInimigo)
+        forcaInimigo = fonteTextoForcaInimigo.render(textoForcaInimigo, True, corTextoForcaInimigo)
+
+        valorVigorInimigo = inimigo.vigorTotal
+        textoVigorInimigo = "Vigor: " + str(valorVigorInimigo)
+        vigorInimigo = fonteTextoVigorInimigo.render(textoVigorInimigo, True, corTextoVigorInimigo)
+
+        valorPrecisaoInimigo = inimigo.precisaoTotal
+        textoPrecisaoInimigo = "Precisão: " + str(valorPrecisaoInimigo)
+        precisaoInimigo = fonteTextoPrecisaoInimigo.render(textoPrecisaoInimigo, True, corTextoPrecisaoInimigo)
+
+        valorEvasaoInimigo = inimigo.astra.evasao
+        textoEvasaoInimigo = "Evasão: " + str(valorEvasaoInimigo)
+        evasaoInimigo = fonteTextoEvasaoInimigo.render(textoEvasaoInimigo, True, corTextoEvasaoInimigo)
+
+        if(inimigo.hpAtual <= 0):
+
+            print("você venceu!!!!")
+            jogando = False
+            pygame.display.quit()
+            pygame.quit()
+            sys.exit()
+
+        elif(jogador.hpAtual <= 0):
+
+            print("você perdeu!!!!")
+            jogando = False
+            pygame.display.quit()
+            pygame.quit()
+            sys.exit()
 
         for evento in eventos:
 
@@ -213,11 +368,150 @@ def main():
                     pygame.quit()
                     sys.exit()
 
+                elif(evento.key == pygame.K_RETURN):
+
+                    if(cursor.posicaoAtual == "ataque"):
+
+                        ataque(jogador,inimigo)
+                        turnos.incrementaTurno()
+                        turnos.mudaLado()
+                        ai.determinaAcao()
+
+                    elif(cursor.posicaoAtual == "tecnica"):
+
+                        cursor.mudaPosicao("elemental")
+
+                    elif(cursor.posicaoAtual == "elemental"):
+
+                        if(jogador.spAtual >= jogador.astra.tecnicaElemento.custo):
+
+                            if(jogador.astra.tecnicaElemento.nome == "hellfire"):
+
+                                hellfire(jogador,inimigo)
+
+                            turnos.incrementaTurno()
+                            turnos.mudaLado()
+                            ai.determinaAcao()
+
+                        else:
+
+                            print(jogador.astra.nome + " não têm SP suficiente para usar " + jogador.astra.tecnicaElemento.nome + ".")
+
+                    elif(cursor.posicaoAtual == "polar"):
+
+                        if(jogador.spAtual >= jogador.astra.tecnicaAlinhamento.custo ):
+
+                            if(jogador.astra.tecnicaAlinhamento.nome == "inspirar"):
+                                inspirado = False
+
+                                for i in jogador.listaStatus:
+
+                                    if (i.nome == "inspiracao"):
+
+                                        inspirado = True
+
+                                if (inspirado == False):
+
+                                    inspirar(jogador)
+
+                                else:
+
+                                    print("mas já está inspirado!")
+
+
+                            turnos.incrementaTurno()
+                            turnos.mudaLado()
+                            ai.determinaAcao()
+
+                        else:
+
+                            print(jogador.astra.nome + " não têm SP suficiente para usar " + jogador.astra.tecnicaAlinhamento.nome)
+
+                    elif(cursor.posicaoAtual == "emblema"):
+
+                        if(jogador.spAtual >= jogador.astra.tecnicaEmblema.custo):
+
+                                if(jogador.astra.tecnicaEmblema.nome == "encontrão"):
+
+                                    encontrao(jogador,inimigo)
+
+                                turnos.incrementaTurno()
+                                turnos.mudaLado()
+                                ai.determinaAcao()
+
+                        else:
+
+                            print(jogador.astra.nome + " não têm SP suficiente para usar " + jogador.astra.tecnicaEmblema.nome + ".")
+
+                    elif(cursor.posicaoAtual == "unica"):
+
+                        if(jogador.spAtual >= jogador.astra.tecnicaUnica.custo):
+
+                            if(jogador.astra.tecnicaUnica.nome == "supernova"):
+
+                                supernova(jogador,inimigo)
+
+                            turnos.incrementaTurno()
+                            turnos.mudaLado()
+                            ai.determinaAcao()
+
+                        else:
+                            print(jogador.astra.nome + " não têm SP suficiente para usar " + jogador.astra.tecnicaUnica.nome + ".")
+
+                elif(evento.key == pygame.K_DOWN or evento.key == pygame.K_UP):
+
+                    if(cursor.posicaoAtual == "ataque"):
+
+                        cursor.mudaPosicao("tecnica")
+
+                    elif(cursor.posicaoAtual == "tecnica"):
+
+                        cursor.mudaPosicao("ataque")
+
+                    elif(cursor.posicaoAtual == "elemental"):
+
+                        cursor.mudaPosicao("emblema")
+
+                    elif(cursor.posicaoAtual == "polar"):
+
+                        cursor.mudaPosicao("unica")
+
+                    elif(cursor.posicaoAtual == "emblema"):
+
+                        cursor.mudaPosicao("elemental")
+
+                    elif(cursor.posicaoAtual == "unica"):
+
+                        cursor.mudaPosicao("polar")
+
+                elif(evento.key == pygame.K_LEFT or evento.key == pygame.K_RIGHT):
+
+                    if(cursor.posicaoAtual == "elemental"):
+
+                        cursor.mudaPosicao("polar")
+
+                    elif(cursor.posicaoAtual == "polar"):
+
+                        cursor.mudaPosicao("elemental")
+
+                    elif(cursor.posicaoAtual == "emblema"):
+
+                        cursor.mudaPosicao("unica")
+
+                    elif(cursor.posicaoAtual  == "unica"):
+
+                        cursor.mudaPosicao("emblema")
+
+                elif(evento.key == pygame.K_BACKSPACE and cursor.posicaoAtual != "tecnica"):
+
+                    cursor.mudaPosicao("ataque")
 
 
         #game loop
 
         #draws e blits
+
+        janela.fill(PRETO)
 
         #>regioes
 
@@ -229,330 +523,53 @@ def main():
         janela.blit(regiaoSPInimigo,((regiaoImagemInimigo.get_width()+regiaoHPInimigo.get_width()),(regiaoNomeInimigo.get_height()+regiaoIconesInimigo.get_height())))
         alturaRegiaoAtributosInimigo = regiaoNomeInimigo.get_height() + regiaoIconesInimigo.get_height() + regiaoHPInimigo.get_height()
         janela.blit(regiaoAtributosInimigo,(regiaoImagemInimigo.get_width(),alturaRegiaoAtributosInimigo))
+        janela.blit(regiaoBordaSuperiorSelecao,(0,regiaoImagemInimigo.get_height()))
+        janela.blit(regiaoBordaInferiorSelecao,(0,regiaoImagemInimigo.get_height() + regiaoBordaSuperiorSelecao.get_height()*3))
+        janela.blit(regiaoSelecaoAtaque,(0,regiaoImagemInimigo.get_height() + regiaoBordaSuperiorSelecao.get_height()))
+        janela.blit(regiaoSelecaoTecnica,(0,regiaoImagemInimigo.get_height() + regiaoBordaSuperiorSelecao.get_height()*2))
+        janela.blit(regiaoSelecaoTecnicaElemental,(regiaoSelecaoAtaque.get_width(), regiaoImagemInimigo.get_height() + regiaoBordaSuperiorSelecao.get_height()))
+        janela.blit(regiaoSelecaoTecnicaPolar,(regiaoSelecaoAtaque.get_width()*2, regiaoImagemInimigo.get_height() + regiaoBordaSuperiorSelecao.get_height()))
+        janela.blit(regiaoSelecaoTecnicaEmblema,(regiaoSelecaoAtaque.get_width(),regiaoImagemInimigo.get_height()+regiaoBordaSuperiorSelecao.get_height()*2))
+        janela.blit(regiaoSelecaoTecnicaUnica, (regiaoSelecaoAtaque.get_width()*2, regiaoImagemInimigo.get_height() + regiaoBordaSuperiorSelecao.get_height() * 2))
 
         #>sprites
-        regiaoImagemInimigo.blit(imagemInimigo,((regiaoImagemInimigo.get_width()-imagemInimigo.get_width())/2,regiaoImagemInimigo.get_height()/2))
+        regiaoImagemInimigo.blit(imagemInimigo,((regiaoImagemInimigo.get_width()-imagemInimigo.get_width())/2,regiaoImagemInimigo.get_height()/2-(imagemInimigo.get_height()/9)))
         regiaoIconesInimigo.blit(iconeElementoInimigo,(iconeElementoInimigo.get_width(),larguraBorda))
         regiaoIconesInimigo.blit(iconeAlinhamentoInimigo,((regiaoIconesInimigo.get_width()-(iconeAlinhamentoInimigo.get_width()*2)),larguraBorda))
         regiaoIconesInimigo.blit(iconeEmblemaInimigo,((regiaoIconesInimigo.get_width()/2)-(iconeEmblemaInimigo.get_width()/2),larguraBorda))
+        regiaoBordaSuperiorSelecao.blit(decoracaoBorda,(0,0))
+        regiaoBordaSuperiorSelecao.blit(decoracaoBorda, (decoracaoBorda.get_width(), 0))
+        regiaoBordaSuperiorSelecao.blit(decoracaoBorda, (decoracaoBorda.get_width()*2, 0))
+
 
         #textos
         regiaoNomeInimigo.blit(nomeInimigo,((regiaoNomeInimigo.get_width()/2)-(fonteTextoNomeInimigo.size(textoNomeInimigo)[0]/2),(regiaoNomeInimigo.get_height()/2)-(fonteTextoNomeInimigo.get_height()/3)))
+        regiaoHPInimigo.fill(PRETO)
+        pygame.draw.rect(regiaoHPInimigo, AZUL, (0, 0, regiaoHPInimigo.get_width(), regiaoHPInimigo.get_height()), larguraBorda)
         regiaoHPInimigo.blit(HPInimigo1,((regiaoHPInimigo.get_width()/2)-(fonteTextoHPInimigo.size(textoHPInimigo1)[0]/2),(regiaoHPInimigo.get_height()/5)-(fonteTextoHPInimigo.get_height()/4)))
         regiaoHPInimigo.blit(HPInimigo2,((regiaoHPInimigo.get_width()/2)-(fonteTextoHPInimigo.size(textoHPInimigo2)[0]/2),(regiaoHPInimigo.get_height()/2)-(fonteTextoHPInimigo.get_height()/100)))
+        regiaoSPInimigo.fill(PRETO)
+        pygame.draw.rect(regiaoSPInimigo, AZUL, (0, 0, regiaoSPInimigo.get_width(), regiaoSPInimigo.get_height()), larguraBorda)
         regiaoSPInimigo.blit(SPInimigo1,((regiaoSPInimigo.get_width()/2)-(fonteTextoSPInimigo.size(textoSPInimigo1)[0]/2),(regiaoSPInimigo.get_height()/5)-(fonteTextoSPInimigo.get_height()/4)))
         regiaoSPInimigo.blit(SPInimigo2,((regiaoSPInimigo.get_width()/2)-(fonteTextoSPInimigo.size(textoSPInimigo2)[0]/2),(regiaoSPInimigo.get_height()/2)-(fonteTextoSPInimigo.get_height()/100)))
+        regiaoAtributosInimigo.fill(PRETO)
+        pygame.draw.rect(regiaoAtributosInimigo, AZUL, (0, 0, regiaoAtributosInimigo.get_width(), regiaoAtributosInimigo.get_height()), larguraBorda)
         regiaoAtributosInimigo.blit(forcaInimigo,((regiaoAtributosInimigo.get_width()/4)-fonteTextoForcaInimigo.size(textoForcaInimigo)[0]/2,regiaoAtributosInimigo.get_height()/6))
         regiaoAtributosInimigo.blit(vigorInimigo,((regiaoAtributosInimigo.get_width()/2)+fonteTextoVigorInimigo.size(textoVigorInimigo)[0]/4,regiaoAtributosInimigo.get_height()/6))
         regiaoAtributosInimigo.blit(precisaoInimigo,((regiaoAtributosInimigo.get_width()/4)-fonteTextoPrecisaoInimigo.size(textoPrecisaoInimigo)[0]/2,(regiaoAtributosInimigo.get_height()/2)+fonteTextoForcaInimigo.get_height()/4))
-        regiaoAtributosInimigo.blit(evasaoInimigo,((regiaoAtributosInimigo.get_width()/2)+fonteTextoEvasaoInimigo.size(textoEvasaoInimigo)[0]/8,(regiaoAtributosInimigo.get_height()/2)+fonteTextoForcaInimigo.get_height()/4))
+        regiaoAtributosInimigo.blit(evasaoInimigo,((regiaoAtributosInimigo.get_width()/2)+fonteTextoEvasaoInimigo.size(textoEvasaoInimigo)[0]/4,(regiaoAtributosInimigo.get_height()/2)+fonteTextoEvasaoInimigo.get_height()/4))
+        regiaoSelecaoAtaque.blit(selecaoATAQUE,(regiaoSelecaoAtaque.get_width()/2-fonteTextoATAQUE.size(textoATAQUE)[0]/2,regiaoSelecaoAtaque.get_height()/2-fonteTextoATAQUE.get_height()/2))
+        regiaoSelecaoTecnica.blit(selecaoTECNICA,(regiaoSelecaoTecnica.get_width()/2-fonteTextoTECNICA.size(textoTECNICA)[0]/2,regiaoSelecaoTecnica.get_height()/2-fonteTextoTECNICA.get_height()/2))
+        regiaoSelecaoTecnicaElemental.blit(selecaoTECNICAELEMENTAL,(regiaoSelecaoTecnicaElemental.get_width()/2-fonteTextoTECNICAELEMENTAL.size(textoTECNICAELEMENTAL)[0]/2,regiaoSelecaoTecnicaElemental.get_height()/2-fonteTextoTECNICAELEMENTAL.get_height()/2))
+        regiaoSelecaoTecnicaPolar.blit(selecaoTECNICAPOLAR,(regiaoSelecaoTecnicaPolar.get_width()/2-fonteTextoTECNICAPOLAR.size(textoTECNICAPOLAR)[0]/2,regiaoSelecaoTecnicaPolar.get_height()/2-fonteTextoTECNICAPOLAR.get_height() / 2))
+        regiaoSelecaoTecnicaEmblema.blit(selecaoTECNICAEMBLEMA, (regiaoSelecaoTecnicaEmblema.get_width() / 2 - fonteTextoTECNICAEMBLEMA.size(textoTECNICAEMBLEMA)[0] / 2, regiaoSelecaoTecnicaEmblema.get_height() / 2 - fonteTextoTECNICAEMBLEMA.get_height() / 2))
+        regiaoSelecaoTecnicaUnica.blit(selecaoTECNICAUNICA, (regiaoSelecaoTecnicaUnica.get_width() / 2 - fonteTextoTECNICAUNICA.size(textoTECNICAUNICA)[0] / 2, regiaoSelecaoTecnicaUnica.get_height() / 2 - fonteTextoTECNICAUNICA.get_height() / 2))
+
+        # cursor
+        cursor.draw()
 
         # updates
         pygame.display.update()
 
-    # rImagemInimigo = Regiao(0,0,janela,"/combate/rImagemInimigo.png",3,3,"tela","direita","tela","abaixo","/combate/fundoTeste.jpg")
-    #
-    # #astra inimigo, aqui são colocadas as questão de interface do inimigo, o funcionamento fica em outro script
-    #
-    # inimigo = Sprite("../assets/sprites/astras/orbFogo.png")
-    #
-    # aninhar(inimigo, janela, rImagemInimigo,"centro","abaixo")
-    #
-    # #regiao nome do astra inimigo
-    #
-    # rNomeInimigo = Regiao(-3,0,janela,"/combate/rNomeAstraInimigo.png",3,3,rImagemInimigo,"direita","tela","abaixo")
-    #
-    # #nome do inimigo
-    #
-    # nomeInimigo = Sprite("../assets/sprites/interface/combate/nomeAstraIgni.png")
-    #
-    # aninhar(nomeInimigo,janela,rNomeInimigo,"centro","centro")
-    #
-    # # região dos simbolos do inimigo
-    #
-    # rSimboloInimigo = Regiao(-3,-3,janela,"/combate/rSimboloAstraInimigo.png",3,3,rImagemInimigo,"direita",rNomeInimigo,"abaixo")
-    #
-    # #simbolos do inimigo
-    #
-    # simboloElemento = Sprite("../assets/sprites/interface/combate/fogoIcone.png")
-    # simboloAlinhamento = Sprite("../assets/sprites/interface/combate/solIcone.png")
-    # simboloEmblema = Sprite("../assets/sprites/interface/combate/espadaIcone.png")
-    #
-    # aninhar(simboloElemento, janela, rSimboloInimigo,"esquerda","centro",simboloElemento.width/2)
-    # aninhar(simboloAlinhamento, janela, rSimboloInimigo,"esquerda","centro",simboloElemento.width*2.5)
-    # aninhar(simboloEmblema, janela, rSimboloInimigo,"esquerda","centro",simboloElemento.width*4.5)
-    #
-    # #região HP e SP do inimigo
-    #
-    # rHPInimigo = Regiao(-3,-3,janela,"/combate/rHPSP.png",3,3,rImagemInimigo,"direita",rSimboloInimigo,"abaixo")
-    # rSPInimigo = Regiao(0,-3, janela, "/combate/rHPSP.png", 3, 3, rHPInimigo, "direita", rSimboloInimigo, "abaixo")
-    #
-    # #HP e SP do inimigo
-    #
-    # hpInimigo = Sprite("../assets/sprites/interface/combate/hpInimigo.png")
-    # spInimigo = Sprite("../assets/sprites/interface/combate/spInimigo.png")
-    #
-    # aninhar(hpInimigo,janela, rHPInimigo,"centro,","centro")
-    # aninhar(spInimigo, janela, rSPInimigo, "centro,", "centro")
-    #
-    # #região de atributos do inimigo
-    #
-    # rAtributosInimigo = Regiao(-3,0,janela,"/combate/rAtributosInimigo.png",3,3,rImagemInimigo,"direita",rHPInimigo,"abaixo")
-    #
-    # #atributos do inimigo
-    #
-    # forInimigo = Sprite("../assets/sprites/interface/combate/forInimigo.png")
-    # evaInimigo = Sprite("../assets/sprites/interface/combate/evaInimigo.png")
-    # preInimigo = Sprite("../assets/sprites/interface/combate/preInimigo.png")
-    # vigInimigo = Sprite("../assets/sprites/interface/combate/vigInimigo.png")
-    #
-    # aninhar(forInimigo,janela, rAtributosInimigo,"esquerda","acima",10,10)
-    # aninhar(evaInimigo,janela, rAtributosInimigo,"direita","abaixo",10,10)
-    # aninhar(preInimigo,janela, rAtributosInimigo,"direita","acima",10,10)
-    # aninhar(vigInimigo,janela, rAtributosInimigo,"esquerda","abaixo",10,10)
-    #
-    # #regiao do texto principal
-    # rTextoPrincipal = Regiao(0,0,janela,"/combate/rTextoPrincipal.png",3,3,"tela","esquerda","tela","abaixo")
-    #
-    # #textoPrincipal
-    #
-    # #>posicionamento baseado em como ira funcionar as linhas
-    #
-    # totalLinhas = 2
-    #
-    # linha1 = Sprite("../assets/sprites/interface/combate/textoPrincipalL1.png")
-    # linha2 = Sprite("../assets/sprites/interface/combate/textoPrincipalL2.png")
-    #
-    # aninhar(linha1,janela, rTextoPrincipal,"esquerda","abaixo",5,linha1.height * (totalLinhas - 1) + 5)
-    # aninhar(linha2,janela, rTextoPrincipal,"esquerda","abaixo",5,linha1.height * (totalLinhas - 2) + 5)
-    #
-    # #regiao de decorcao dos 4 elementos, não está na estrutura certa, depois criar uma função para ancorar sprites numa região, não apenas uma região na outra
-    # rDecoracaoSuperior1 = Regiao(0,0,janela,"/combate/decoracao4elementos.png",0,0,"tela","direita",rImagemInimigo,"abaixo")
-    # rDecoracaoSuperior2 = Regiao(0,0,janela,"/combate/decoracao4elementos.png",0,0,rDecoracaoSuperior1,"direita",rImagemInimigo,"abaixo")
-    # rDecoracaoSuperior3 = Regiao(0,0,janela,"/combate/decoracao4elementos.png",0,0,rDecoracaoSuperior2,"direita",rImagemInimigo,"abaixo")
-    # # rDecoracaoSuperior4 = Regiao(0,0,janela,"/combate/decoracao4elementos.png",0,0,rDecoracaoSuperior3,"direita",rImagemInimigo,"abaixo")
-    # rDecoracaoInferior1 = Regiao(0,0,janela,"/combate/decoracao4elementos.png",0,0,"tela","direita","tela","acima")
-    # rDecoracaoInferior2 = Regiao(0,0,janela,"/combate/decoracao4elementos.png",0,0,rDecoracaoInferior1,"direita","tela","acima")
-    # rDecoracaoInferior3 = Regiao(0,0,janela,"/combate/decoracao4elementos.png",0,0,rDecoracaoInferior2,"direita","tela","acima")
-    # # rDecoracaoInferior4 = Regiao(0,0,janela,"/combate/decoracao4elementos.png",0,0,rDecoracaoInferior3,"direita","tela","acima")
-    #
-    # #região seleção de ataque
-    # rSelecaoAtaque = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,"tela","direita",rDecoracaoSuperior1,"abaixo","",0,0,True,0)
-    # # rSelecaoAtaque.moverRegiao(0,rSelecaoAtaque.getBorda().height)
-    #
-    # #texto seleção de ataque
-    # textoAtaque = Sprite("../assets/sprites/interface/combate/textoSelecaoAtaque.png")
-    # aninhar(textoAtaque,janela, rSelecaoAtaque,"centro","centro")
-    #
-    # #regiao seleção de tecnica
-    # rSelecaoTecnica = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,"tela","direita",rDecoracaoInferior1,"acima","",0,0,True,1)
-    #
-    # #texto seleção tecnica
-    # textoTecnica = Sprite("../assets/sprites/interface/combate/textoSelecaoTecnica.png")
-    # aninhar(textoTecnica,janela, rSelecaoTecnica,"centro","centro")
-    #
-    # #regiao selecao tecnica elemental
-    # rSelecaoElemental = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,rSelecaoAtaque,"direita",rDecoracaoSuperior2,"abaixo","",0,0,True,2)
-    #
-    # #texto tecnica elemental
-    # textoElemental = Sprite("../assets/sprites/interface/combate/textoElemental.png")
-    # aninhar(textoElemental,janela, rSelecaoElemental,"centro","centro")
-    #
-    # #regiao selecao tecnica alinhamento
-    # rSelecaoAlinhamento = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,rSelecaoElemental,"direita",rDecoracaoSuperior3,"abaixo","",0,0,True,3)
-    #
-    # #texto tecnica alinhamento
-    # textoAlinhamento = Sprite("../assets/sprites/interface/combate/textoAlinhamento.png")
-    # aninhar(textoAlinhamento,janela, rSelecaoAlinhamento,"centro","centro")
-    #
-    # #regiao selecao tecnica emblema
-    # rSelecaoEmblema = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,rSelecaoTecnica,"direita",rDecoracaoInferior2,"acima","",0,0,True,4)
-    #
-    # #texto tecnical emblema
-    # textoEmblema = Sprite("../assets/sprites/interface/combate/textoEmblema.png")
-    # aninhar(textoEmblema,janela, rSelecaoEmblema,"centro","centro")
-    #
-    # #regiao selecao tecnica especial
-    # rSelecaoEspecial = Regiao(0,0,janela,"/combate/rSelecaoAtaque.png",3,3,rSelecaoEmblema,"direita",rDecoracaoInferior3,"acima","",0,0,True,5)
-    #
-    # #texto tecnical especial
-    # textoEspecial = Sprite("../assets/sprites/interface/combate/textoEspecial.png")
-    # aninhar(textoEspecial,janela, rSelecaoEspecial,"centro","centro")
-    #
-    # #região  do imagem do astra do jogador
-    # rImagemJogador = Regiao(0,0,janela,"/combate/rImagemJogador.png",3,3,rSelecaoAlinhamento,"direita",rAtributosInimigo,"abaixo")
-    #
-    # #imagem astra do jogador
-    # jogador = Sprite("../assets/sprites/astras/orbAgua138.png")
-    # aninhar(jogador, janela, rImagemJogador,"centro","centro")
-    #
-    # #região icones do jogador
-    # rSimboloJogador = Regiao(0,0,janela,"/combate/rSimboloAstraJogador.png",3,3,rSelecaoEspecial,"direita",rImagemJogador,"abaixo")
-    #
-    # #simbolos do jogador
-    # simboloElementoJogador = Sprite("../assets/sprites/interface/combate/aguaIconeRedux.png")
-    # simboloAlinhamentoJogador = Sprite("../assets/sprites/interface/combate/solIconeRedux.png")
-    # simboloEmblemaJogador = Sprite("../assets/sprites/interface/combate/espadaIconeRedux.png")
-    #
-    # aninhar(simboloElementoJogador,janela, rSimboloJogador,"esquerda","centro,")
-    # aninhar(simboloAlinhamentoJogador,janela, rSimboloJogador,"centro","centro",-4)
-    # aninhar(simboloEmblemaJogador, janela, rSimboloJogador,"direita","centro")
-    #
-    # #região nome do jogador
-    # rNomeJogador = Regiao(0,0,janela,"/combate/rNomeAstraJogador.png",3,3,rImagemJogador,"direita",rAtributosInimigo,"abaixo")
-    #
-    # #nome do jogador
-    # nomeJogador = Sprite("../assets/sprites/interface/combate/nomeAstraAquaRedux.png")
-    # aninhar(nomeJogador, janela, rNomeJogador,"centro","centro")
-    #
-    # #região HP e SP do jogador
-    # rHPJogador = Regiao(0,0,janela,"/combate/rHPSPJogador.png",3,3,rImagemJogador,"direita",rNomeJogador,"abaixo")
-    # rSPJogador = Regiao(0,0,janela,"/combate/rHPSPJogador.png",3,3, rHPJogador, "direita", rNomeJogador, "abaixo")
-    #
-    # #texto HP e SP jogador
-    # hpJogador = Sprite("../assets/sprites/interface/combate/hpJogador.png")
-    # valorHPJogador = Sprite("../assets/sprites/interface/combate/valorHPSPJogador.png")
-    # spJogador = Sprite("../assets/sprites/interface/combate/spJogador.png")
-    # valorSPJogador = Sprite("../assets/sprites/interface/combate/valorHPSPJogador.png")
-    #
-    # aninhar(hpJogador,janela, rHPJogador,"centro","acima")
-    # aninhar(valorHPJogador,janela, rHPJogador,"centro","abaixo")
-    # aninhar(spJogador,janela, rSPJogador,"centro","acima")
-    # aninhar(valorSPJogador, janela, rSPJogador,"centro","abaixo")
-    #
-    # #região atributos do jogador
-    # rAtributosJogador = Regiao(0,0,janela,"/combate/rAtributosJogador.png",3,3,rImagemJogador,"direita",rHPJogador,"abaixo")
-    #
-    # #atributos jogador
-    # forJogador = Sprite("../assets/sprites/interface/combate/forJogador.png")
-    # preJogador = Sprite("../assets/sprites/interface/combate/preJogador.png")
-    # vigJogador = Sprite("../assets/sprites/interface/combate/vigJogador.png")
-    # evaJogador = Sprite("../assets/sprites/interface/combate/evaJogador.png")
-    #
-    # aninhar(forJogador, janela, rAtributosJogador,"esquerda","acima",5,5)
-    # aninhar(preJogador,janela, rAtributosJogador,"direita","acima", 5,5)
-    # aninhar(vigJogador,janela, rAtributosJogador,"esquerda","abaixo",5,5)
-    # aninhar(evaJogador,janela, rAtributosJogador,"direita","abaixo",5,5)
-    #
-    # #região descrição
-    # rDescricao = Regiao(0,0,janela,"/combate/rDescricao.png",3,3,rNomeJogador,"direita",rTextoPrincipal,"abaixo")
-    #
-    # #texto descrição, ele é variavel e decidido no loop... No momento, futuramente esse processo será uma função da classe de texto
-    # descricaoAtual = ""
-    #
-    # #cursor
-    # cursor = Cursor(janela,"/glove3.png","/glove3Espelhada.png")
-    # cursor.moveCursor(janela,0)
-    #
-    # #controle
-    #
-    # teclado = Window.get_keyboard()
-    #
-    # sair = "esc"
-    # selecaoAbaixo = "down"
-    # selecaoAcima = "up"
-
-    #game loop
-
-    # while(teclado.key_pressed(sair) == False):
-
-        # if(teclado.key_pressed("down") or teclado.key_pressed("up")):
-        #
-        #     if(cursor.getPosAtual() == 1):
-        #
-        #         cursor.moveCursor(janela,0)
-        #
-        #     else:
-        #
-        #         cursor.moveCursor(janela,1)
-        #
-        # janela.set_background_color(janelaCorFundo)
-
-
-        #draw regiões
-
-        # rImagemInimigo.desenhaRegiao()
-        # rNomeInimigo.desenhaRegiao()
-        # rSimboloInimigo.desenhaRegiao()
-        # rHPInimigo.desenhaRegiao()
-        # rSPInimigo.desenhaRegiao()
-        # rAtributosInimigo.desenhaRegiao()
-        # rTextoPrincipal.desenhaRegiao()
-        # rSelecaoAtaque.desenhaRegiao()
-        # rSelecaoTecnica.desenhaRegiao()
-        # rSelecaoElemental.desenhaRegiao()
-        # rSelecaoAlinhamento.desenhaRegiao()
-        # rSelecaoEmblema.desenhaRegiao()
-        # rSelecaoEspecial.desenhaRegiao()
-        # rDecoracaoSuperior1.desenhaRegiao()
-        # rDecoracaoSuperior2.desenhaRegiao()
-        # rDecoracaoSuperior3.desenhaRegiao()
-        # # rDecoracaoSuperior4.desenhaRegiao()
-        # rDecoracaoInferior1.desenhaRegiao()
-        # rDecoracaoInferior2.desenhaRegiao()
-        # rDecoracaoInferior3.desenhaRegiao()
-        # # rDecoracaoInferior4.desenhaRegiao()
-        # rImagemJogador.desenhaRegiao()
-        # rSimboloJogador.desenhaRegiao()
-        # rNomeJogador.desenhaRegiao()
-        # rHPJogador.desenhaRegiao()
-        # rSPJogador.desenhaRegiao()
-        # rAtributosJogador.desenhaRegiao()
-        # rDescricao.desenhaRegiao()
-        #
-        #
-        # #draw textos
-        #
-        # nomeInimigo.draw()
-        # hpInimigo.draw()
-        # spInimigo.draw()
-        # forInimigo.draw()
-        # preInimigo.draw()
-        # evaInimigo.draw()
-        # vigInimigo.draw()
-        # linha1.draw()
-        # linha2.draw()
-        # textoAtaque.draw()
-        # textoTecnica.draw()
-        # textoElemental.draw()
-        # textoAlinhamento.draw()
-        # textoEmblema.draw()
-        # textoEspecial.draw()
-        # nomeJogador.draw()
-        # hpJogador.draw()
-        # valorHPJogador.draw()
-        # spJogador.draw()
-        # valorSPJogador.draw()
-        # forJogador.draw()
-        # preJogador.draw()
-        # evaJogador.draw()
-        # vigJogador.draw()
-        #
-        # if(cursor.getPosAtual() == 0):
-        #
-        #     descricaoAtual = Sprite("../assets/sprites/interface/combate/textoDescricaoAtaque.png")
-        #
-        # elif(cursor.getPosAtual() == 1):
-        #
-        #     descricaoAtual = Sprite("../assets/sprites/interface/combate/textoDescricaoTecnica.png")
-        #
-        #
-        # aninhar(descricaoAtual,janela, rDescricao,"esquerda","abaixo",5,2)
-        #
-        # descricaoAtual.draw()
-        #
-        # #draw sprites
-        #
-        # inimigo.draw()
-        # simboloElemento.draw()
-        # simboloAlinhamento.draw()
-        # simboloEmblema.draw()
-        # jogador.draw()
-        # simboloElementoJogador.draw()
-        # simboloAlinhamentoJogador.draw()
-        # simboloEmblemaJogador.draw()
-        #
-        # #draw cursor
-        # cursor.desenhaCursor()
 
 main()
